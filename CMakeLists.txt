@@ -45,7 +45,7 @@ find_package(Python3 COMPONENTS Interpreter Development REQUIRED)
 #message("Python_Development_FOUND:${Python_Development_FOUND}")
 #message("Python_LIBRARIES:${Python_LIBRARIES}")
 add_subdirectory(pybind11)
-pybind11_add_module(ecl src/binder.cpp)
+#pybind11_add_module(ecl src/binder.cpp)
 
 if(NOT CMAKE_BUILD_TYPE)
 	# force debug builds if we test ECL as standalone
@@ -182,7 +182,7 @@ add_subdirectory(EKF)
 add_subdirectory(geo)
 add_subdirectory(geo_lookup)
 
-target_link_libraries(ecl PRIVATE ecl_EKF ecl_geo ecl_geo_lookup ecl_airdata)
+#target_link_libraries(ecl PRIVATE ecl_EKF ecl_geo ecl_geo_lookup ecl_airdata)
 
 if(BUILD_TESTING AND CMAKE_SOURCE_DIR STREQUAL PROJECT_SOURCE_DIR)
 	add_subdirectory(test)
