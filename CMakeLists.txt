@@ -146,7 +146,8 @@ if(CMAKE_SOURCE_DIR STREQUAL PROJECT_SOURCE_DIR)
 	file(GLOB MATRIX_SRC
 		Matrix/matrix/*.hpp
 	)
-	add_library(matrix INTERFACE ${MATRIX_SRC})
+	add_library(matrix INTERFACE)
+ 	target_sources(matrix ${MATRIX_SRC})
 	add_dependencies(prebuild_targets matrix)
 	include_directories(Matrix)
 
