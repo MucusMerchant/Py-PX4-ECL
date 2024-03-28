@@ -185,7 +185,6 @@ add_subdirectory(EKF)
 add_subdirectory(geo)
 add_subdirectory(geo_lookup)
 
-target_compile_options(ecl PRIVATE -fno-associative-math)
 target_link_libraries(ecl PRIVATE ecl_EKF ecl_geo ecl_geo_lookup ecl_airdata)
 
 if(BUILD_TESTING AND CMAKE_SOURCE_DIR STREQUAL PROJECT_SOURCE_DIR)
