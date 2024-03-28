@@ -106,7 +106,7 @@ jobs:
 
       - name: Install requirements
         run: |
-          pip install cibuildwheel twine pybind11
+          pip install cibuildwheel twine pybind11 setuptools
 
       - name: Configure cibuildwheel
         shell: bash
