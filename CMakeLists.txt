@@ -50,6 +50,7 @@ add_subdirectory(pybind11)
 pybind11_add_module(ecl src/binder.cpp)
 target_compile_features(ecl PRIVATE cxx_std_14)
 target_compile_options(ecl PRIVATE -fPIC)
+set_target_properties(ecl PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/build)
 
 if(NOT CMAKE_BUILD_TYPE)
 	# force debug builds if we test ECL as standalone
