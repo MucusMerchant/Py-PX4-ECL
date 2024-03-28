@@ -38,6 +38,12 @@ jobs:
       - name: build
         run: |
           make
+
+      - name: Upload binary artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: my_binary
+          path: dist/*
           
       - name: Build sdist
         run: |
@@ -51,7 +57,7 @@ jobs:
         run: |
           python3 -m twine check wheelhouse/*
 
-      - name: Upload sdist
+      - name: Upload binary
         uses: actions/upload-artifact@v4
         with:
           name: sdist
