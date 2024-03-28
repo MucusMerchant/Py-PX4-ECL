@@ -4,6 +4,7 @@ include LICENSE
 include MANIFEST.in
 include pyproject.toml
 include setup.py
+include ecl.h
 
 include CMakeLists.txt
 include requirements.txt
