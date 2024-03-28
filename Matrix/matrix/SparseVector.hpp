@@ -22,10 +22,10 @@ template<int N> struct force_constexpr_eval {
 template<typename Type, size_t M, size_t... Idxs>
 class SparseVector {
 private:
-    static constexpr size_t N = sizeof...(Idxs);
-    static constexpr size_t _indices[N] {Idxs...};
+    static size_t N = sizeof...(Idxs);
+    static size_t _indices[N] {Idxs...};
 
-    static constexpr bool duplicateIndices() {
+    static bool duplicateIndices() {
         for (size_t i = 0; i < N; i++) {
             for (size_t j = 0; j < i; j++) {
                 if (_indices[i] == _indices[j]) {
@@ -35,7 +35,7 @@ private:
         }
         return false;
     }
-    static constexpr size_t findMaxIndex() {
+    static size_t findMaxIndex() {
         size_t maxIndex = 0;
         for (size_t i = 0; i < N; i++) {
             if (maxIndex < _indices[i]) {
@@ -52,7 +52,7 @@ private:
 
     Type _data[N] {};
 
-    static constexpr int findCompressedIndex(size_t index) {
+    static int findCompressedIndex(size_t index) {
         int compressedIndex = -1;
         for (size_t i = 0; i < N; i++) {
             if (index == _indices[i]) {
@@ -85,14 +85,14 @@ public:
 
     template <size_t i>
     inline Type at() const {
-        static constexpr int compressed_index = force_constexpr_eval<findCompressedIndex(i)>::value;
+        static int compressed_index = force_constexpr_eval<findCompressedIndex(i)>::value;
         static_assert(compressed_index >= 0, "cannot access unpopulated indices");
         return _data[compressed_index];
     }
 
     template <size_t i>
     inline Type& at() {
-        static constexpr int compressed_index = force_constexpr_eval<findCompressedIndex(i)>::value;
+        static int compressed_index = force_constexpr_eval<findCompressedIndex(i)>::value;
         static_assert(compressed_index >= 0, "cannot access unpopulated indices");
         return _data[compressed_index];
     }
@@ -180,8 +180,8 @@ Type quadraticForm(const matrix::SquareMatrix<Type, M>& A, const matrix::SparseV
     return res;
 }
 
-template<typename Type,size_t M, size_t... Idxs>
-constexpr size_t SparseVector<Type, M, Idxs...>::_indices[SparseVector<Type, M, Idxs...>::N];
+template<typename Type,size_t M, size_t... Idxs> 
+size_t SparseVector<Type, M, Idxs...>::_indices[SparseVector<Type, M, Idxs...>::N];
 
 template<size_t M, size_t ... Idxs>
 using SparseVectorf = SparseVector<float, M, Idxs...>;
