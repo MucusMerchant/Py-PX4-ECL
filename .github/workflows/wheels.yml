@@ -33,16 +33,12 @@ jobs:
 
       - name: Install requirements
         run: |
-          pip install check-manifest twine wheel setuptools
+          pip install twine wheel setuptools
 
-      #- name: Run check-manifest
-        #run: |
-         # python -m check_manifest
       - name: build
         run: |
-          python setup.py bdist_wheel
+          make
           
-
       - name: Build sdist
         run: |
           python3 -m build --sdist --outdir wheelhouse
