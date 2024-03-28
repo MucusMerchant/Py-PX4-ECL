@@ -1,30 +1,59 @@
-name: Build
+name: Wheels
 
-on: [push, pull_request]
+on:
+  workflow_dispatch:
+  pull_request:
+  push:
+    branches:
+     - master
+  release:
+    types:
+      - published
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
+  build_sdist:
+    name: Build SDist
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Build SDist
+      run: pipx run build --sdist
+
+    - name: Check metadata
+      run: pipx run twine check dist/*
+
+    - uses: actions/upload-artifact@v4
+      with:
+        name: cibw-sdist
+        path: dist/*.tar.gz
+
+
   build_wheels:
-    name: Build wheels on ${{ matrix.os }}
+    name: Wheels on ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     strategy:
+      fail-fast: false
       matrix:
-        # macos-13 is an intel runner, macos-14 is apple silicon
-        os: [ubuntu-latest, windows-latest, macos-13, macos-14]
+        os: [ubuntu-latest, windows-latest, macos-latest]
 
     steps:
-      - uses: actions/checkout@v4
+    - uses: actions/checkout@v4
 
-      - name: Build wheels
-        uses: pypa/cibuildwheel@v2.17.0
-        # env:
-        #   CIBW_SOME_OPTION: value
-        #    ...
-        # with:
-        #   package-dir: .
-        #   output-dir: wheelhouse
-        #   config-file: "{package}/pyproject.toml"
+    - uses: pypa/cibuildwheel@v2.17
+      env:
+        CIBW_ARCHS_MACOS: auto universal2
 
-      - uses: actions/upload-artifact@v4
-        with:
-          name: cibw-wheels-${{ matrix.os }}-${{ strategy.job-index }}
-          path: ./wheelhouse/*.whl
+    - name: Verify clean directory
+      run: git diff --exit-code
+      shell: bash
+
+    - name: Upload wheels
+      uses: actions/upload-artifact@v4
+      with:
+        name: cibw-wheels-${{ matrix.os }}
+        path: wheelhouse/*.whl
