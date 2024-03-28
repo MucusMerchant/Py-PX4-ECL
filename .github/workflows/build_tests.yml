@@ -2,6 +2,7 @@
 name: Build Tests
 
 on:
+  workflow-dispatch:
   push:
     branches:
       - master
