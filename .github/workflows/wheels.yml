@@ -14,7 +14,7 @@ on:
 jobs:
   sdist:
     name: Source distribution
-    runs-on: macos-latest
+    runs-on: windows-latest
     if: startsWith(github.ref_name, 'docs') != true
 
     steps:
