@@ -471,7 +471,7 @@ PYBIND11_MODULE(ecl, m) {
         .def("getAccelBiasVariance", &Ekf::getAccelBiasVariance)
         .def("getMagBiasVariance", &Ekf::getMagBiasVariance, py::return_value_policy::reference)
         .def("get_gps_check_status", &Ekf::get_gps_check_status)
-        .def("state_reset_status", &Ekf::state_reset_status, py::return_value_policy::reference)
+        //.def("state_reset_status", &Ekf::state_reset_status, py::return_value_policy::reference)
         .def("get_posD_reset", &Ekf::get_posD_reset)
         .def("get_velD_reset", &Ekf::get_velD_reset)
         .def("get_posNE_reset", &Ekf::get_posNE_reset)
