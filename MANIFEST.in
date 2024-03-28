@@ -1,0 +1,27 @@
+include *.md
+include LICENSE
+
+include MANIFEST.in
+include pyproject.toml
+include setup.py
+
+include CMakeLists.txt
+include requirements.txt
+graft src
+graft pybind11
+graft EKF
+graft geo
+graft geo_lookup
+graft airdata
+graft Matrix
+exclude Matrix/.github
+
+include .gitmodules
+graft extern
+exclude extern/fmt/.git
+
+graft res
+
+graft docs
+
+global-exclude *.py[co]
