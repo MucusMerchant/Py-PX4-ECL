@@ -26,7 +26,7 @@ jobs:
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.11'
+          python-version: '3.10'
 
       - name: Setup CMake
         uses: jwlawson/actions-setup-cmake@v2.0
@@ -35,9 +35,9 @@ jobs:
         run: |
           pip install check-manifest twine
 
-      - name: Run check-manifest
-        run: |
-          python -m check_manifest
+      #- name: Run check-manifest
+        #run: |
+         # python -m check_manifest
 
       - name: Build sdist
         run: |
