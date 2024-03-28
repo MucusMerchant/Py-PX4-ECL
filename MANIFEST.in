@@ -4,10 +4,9 @@ include LICENSE
 include MANIFEST.in
 include pyproject.toml
 include setup.py
-include ecl.h
 
 include CMakeLists.txt
-include Makefile
+include requirements.txt
 graft src
 graft pybind11
 graft EKF
@@ -15,6 +14,8 @@ graft geo
 graft geo_lookup
 graft airdata
 graft Matrix
+graft mathlib
+graft AlphaFilter
 exclude Matrix/.github
 
 include .gitmodules
