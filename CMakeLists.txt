@@ -45,7 +45,7 @@ find_package(Python3 COMPONENTS Interpreter Development REQUIRED)
 #message("Python_Development_FOUND:${Python_Development_FOUND}")
 #message("Python_LIBRARIES:${Python_LIBRARIES}")
 add_subdirectory(pybind11)
-#pybind11_add_module(ecl src/binder.cpp)
+pybind11_add_module(ecl src/binder.cpp)
 
 if(NOT CMAKE_BUILD_TYPE)
 	# force debug builds if we test ECL as standalone
