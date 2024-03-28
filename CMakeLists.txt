@@ -81,7 +81,7 @@ option(ECL_ASAN "Enable ECL address sanitizer" OFF)
 
 if (("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang") OR ("${CMAKE_CXX_COMPILER_ID}" MATCHES "AppleClang"))
 	set(CMAKE_CXX_FLAGS_COVERAGE
-		"--coverage -ftest-coverage -fdiagnostics-absolute-paths -O0 -fprofile-arcs -fno-inline-functions -fno-elide-constructors"
+		"--coverage -std=c++14 -ftest-coverage -fdiagnostics-absolute-paths -O0 -fprofile-arcs -fno-inline-functions -fno-elide-constructors"
 		CACHE STRING "Flags used by the C++ compiler during coverage builds" FORCE)
 	set(CMAKE_EXE_LINKER_FLAGS_COVERAGE
 		"-ftest-coverage -fdiagnostics-absolute-paths"
