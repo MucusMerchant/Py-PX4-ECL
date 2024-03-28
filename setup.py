@@ -134,7 +134,7 @@ setup(
     author="Andrew Shen-Costello",
     author_email="andrewshencostello@gmail.com",
     description="A Python API to the PX4 Estimation and Control Library for flight applications",
-    long_description=long_description,
+    long_description="",
     ext_modules=[CMakeExtension("ecl")],
     cmdclass={"build_ext": CMakeBuild},
     zip_safe=False,
