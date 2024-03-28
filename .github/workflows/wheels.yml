@@ -38,6 +38,9 @@ jobs:
       #- name: Run check-manifest
         #run: |
          # python -m check_manifest
+      - name: build
+        run: |
+          make
 
       - name: Build sdist
         run: |
