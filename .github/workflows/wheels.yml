@@ -40,7 +40,7 @@ jobs:
          # python -m check_manifest
       - name: build
         run: |
-          make
+          python setup.py bdist_wheel
           
 
       - name: Build sdist
