@@ -40,10 +40,12 @@ if(POLICY CMP0057)
 endif()
 
 find_package(Python3 COMPONENTS Interpreter Development REQUIRED)
+
 #message("Python_FOUND:${Python_FOUND}")
 #message("Python_VERSION:${Python_VERSION}")
 #message("Python_Development_FOUND:${Python_Development_FOUND}")
 #message("Python_LIBRARIES:${Python_LIBRARIES}")
+
 add_subdirectory(pybind11)
 pybind11_add_module(ecl src/binder.cpp)
 target_compile_features(ecl PRIVATE cxx_std_14)
@@ -70,7 +72,7 @@ if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/.git)
 		)
 endif()
 
-message(STATUS "PX4 ECL: Very lightweight Estimation & Control Library ${git_tag}")
+message(STATUS "PX4 ECL: Very lightweight Estimation & Control Library meow meow ${git_tag}")
 
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -99,7 +101,6 @@ else()
 endif()
 
 mark_as_advanced(CMAKE_CXX_FLAGS_COVERAGE CMAKE_C_FLAGS_COVERAGE CMAKE_EXE_LINKER_FLAGS_COVERAGE)
-
 
 set(ECL_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR} CACHE STRING "ECL source location" FORCE)
 
