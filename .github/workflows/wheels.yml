@@ -33,7 +33,7 @@ jobs:
 
       - name: Install requirements
         run: |
-          pip install twine wheel setuptools
+          pip install twine check-manifest
 
       #- name: build
         #run: |
