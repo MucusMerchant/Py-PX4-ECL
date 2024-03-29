@@ -51,7 +51,7 @@ jobs:
 
       - name: Install from sdist
         run: |
-          pip install "wheelhouse\\*.tar.gz'
+          pip install "wheelhouse\\*.tar.gz"
 
       - name: Check sdist
         run: |
