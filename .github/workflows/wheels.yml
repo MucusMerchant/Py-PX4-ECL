@@ -37,9 +37,9 @@ jobs:
           python3 -m pip install --upgrade build
           pip install twine check-manifest
 
-      #- name: build
-        #run: |
-          #make
+      - name: build
+        run: |
+          make
 
       - name: Upload binary artifact
         uses: actions/upload-artifact@v4
