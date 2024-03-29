@@ -31,13 +31,21 @@ jobs:
       - name: Setup CMake
         uses: jwlawson/actions-setup-cmake@v2.0
 
+      - name: upgrade pip
+      - run: |
+          python3 -m pip install --upgrade pip
+
+      - name: upgrade build
+      - run: |
+          python3 -m pip install --upgrade build
+
       - name: Install requirements
         run: |
           pip install twine check-manifest
 
-      - name: build
-        run: |
-          make
+      #- name: build
+        #run: |
+          #make
 
       - name: Upload binary artifact
         uses: actions/upload-artifact@v4
@@ -47,7 +55,7 @@ jobs:
           
       - name: Build sdist
         run: |
-          python3 -m build --sdist --outdir wheelhouse
+          python3 -m build --outdir wheelhouse
 
       - name: Install from sdist
         run: |
