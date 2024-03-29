@@ -31,9 +31,10 @@ jobs:
       - name: Setup CMake
         uses: jwlawson/actions-setup-cmake@v2.0
 
-
       - name: Install requirements
         run: |
+          python3 -m pip install --upgrade pip
+          python3 -m pip install --upgrade build
           pip install twine check-manifest
 
       #- name: build
