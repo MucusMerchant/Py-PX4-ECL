@@ -78,7 +78,6 @@ set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_CXX_EXTENSIONS ON)
-set(CMAKE_GENERATOR 'MinGW Makefiles')
 
 # code coverage support
 option(COV_HTML "Display html for coverage" OFF)
