@@ -35,6 +35,13 @@ cmake_minimum_required(VERSION 3.0)
 
 project(ECL CXX)
 
+message(STATUS "PX4 ECL: Very lightweight Estimation & Control Library meow meow ${git_tag}")
+
+set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+set(CMAKE_CXX_EXTENSIONS ON)
+
 if(POLICY CMP0057)
     cmake_policy(SET CMP0057 NEW)
 endif()
@@ -71,13 +78,6 @@ if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/.git)
 		WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
 		)
 endif()
-
-message(STATUS "PX4 ECL: Very lightweight Estimation & Control Library meow meow ${git_tag}")
-
-set(CMAKE_CXX_STANDARD 14)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
-set(CMAKE_CXX_EXTENSIONS ON)
 
 # code coverage support
 option(COV_HTML "Display html for coverage" OFF)
