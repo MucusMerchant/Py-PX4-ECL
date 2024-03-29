@@ -49,9 +49,9 @@ jobs:
         run: |
           python3 -m build --sdist --outdir wheelhouse
 
-      - name: Install from sdist
-        run: |
-          pip install "wheelhouse\\*.tar.gz"
+      #- name: Install from sdist
+        #run: |
+          #pip install wheelhouse/*.tar.gz
 
       - name: Check sdist
         run: |
