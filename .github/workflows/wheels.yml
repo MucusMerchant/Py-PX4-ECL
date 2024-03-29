@@ -34,14 +34,6 @@ jobs:
       - name: Install requirements
         run: |
           pip install twine check-manifest
-          
-      - name: Configure CMake for MinGW
-        run: |
-          cmake -S . -B build -G "MinGW Makefiles"
-
-      - name: Build Python package with MinGW
-        run: |
-          cmake --build build --config Release
 
       #- name: build
         #run: |
