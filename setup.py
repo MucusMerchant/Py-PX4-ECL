@@ -60,7 +60,7 @@ class CMakeBuild(build_ext):
 
         # In this example, we pass in the version to C++. You might not need to.
         cmake_args += [f"-DEXAMPLE_VERSION_INFO={self.distribution.get_version()}"]
-
+        self.compiler.set_executable("compiler_cxx", "mingw32")
         if self.compiler.compiler_type != "msvc":
             # Using Ninja-build since it a) is available as a wheel and b)
             # multithreads automatically. MSVC would require all variables be
