@@ -86,7 +86,7 @@ if (("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang") OR ("${CMAKE_CXX_COMPILER_ID}" 
 	set(CMAKE_EXE_LINKER_FLAGS_COVERAGE
 		"-ftest-coverage -fdiagnostics-absolute-paths"
 		CACHE STRING "Flags used for linking binaries during coverage builds" FORCE)
-  	set(CMAKE_OSX_DEPLOYMENT_TARGET 12_0)
+  	set(CMAKE_OSX_DEPLOYMENT_TARGET 12.0)
 else()
 	set(CMAKE_CXX_FLAGS_COVERAGE
 		# Bring back -fprofile-abs-path when GCC 9 is available on Ubuntu LTS
