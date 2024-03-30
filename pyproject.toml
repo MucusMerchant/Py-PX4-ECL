@@ -1,3 +1,9 @@
+[project]
+name = "ecl"
+version = "1.0.0"
+description = "Your package description"
+license = "MIT"
+
 [build-system]
 requires = [
     "setuptools>=42",
