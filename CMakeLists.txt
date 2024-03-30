@@ -40,6 +40,7 @@ message(STATUS "PX4 ECL: Very lightweight Estimation & Control Library meow meow
 if(POLICY CMP0057)
     cmake_policy(SET CMP0057 NEW)
 endif()
+cmake_policy(SET CMP0054 NEW)
 
 find_package(Python3 COMPONENTS Interpreter Development REQUIRED)
 
