@@ -7,6 +7,17 @@ requires = [
 ]
 build-backend = "setuptools.build_meta"
 
+[tool.setuptools]
+name = "ecl"
+version = "0.0.1"
+author = "Andrew Shen-Costello"
+author_email = "andrewshencostello@gmail.com"
+description = "A Python API to the PX4 Estimation and Control Library for flight applications"
+
+[tool.cmake_extension]
+extension-name = "ecl"
+sourcedir = "."
+
 [tool.mypy]
 files = "setup.py"
 python_version = "3.10"
