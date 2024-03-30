@@ -114,8 +114,8 @@ if(CMAKE_SOURCE_DIR STREQUAL PROJECT_SOURCE_DIR)
 
 	if(MSVC)
 		add_compile_options(
-			#/W4
-			#/WX
+			/W4
+			/WX
    			/std:c++14
 
 			/D_USE_MATH_DEFINES
@@ -134,6 +134,8 @@ if(CMAKE_SOURCE_DIR STREQUAL PROJECT_SOURCE_DIR)
 			-Wno-missing-field-initializers # ignore for GCC 4.8 support
 		)
 	endif()
+ 	message(STATUS "MSVC Compile Flags:")
+    	message(STATUS "CMAKE_CXX_FLAGS: ${CMAKE_CXX_FLAGS}")
 
 	if(BUILD_TESTING)
 
