@@ -17,6 +17,8 @@ documenting this in case me or another poor soul has to do this again
 ## getting started
 >pip install pybind11
 >git clone https://github.com/pybind/pybind11.git into the main directory
+or
+>git submodule update --init --recursive
 
 Add the following lines to CMakeLists.txt after subdirectories:
 ```
