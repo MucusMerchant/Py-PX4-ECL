@@ -49,11 +49,11 @@ jobs:
           
       - name: Build sdist
         run: |
-          python3 -m build --wheel --outdir wheelhouse
+          python3 -m build --sdist --outdir wheelhouse
 
       - name: Install from sdist
         run: |
-          pip install wheelhouse/ecl-0.0.1.tar.gz
+          pip install --compiler=mingw64 wheelhouse/ecl-0.0.1.tar.gz
 
       - name: Check sdist
         run: |
