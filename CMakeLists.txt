@@ -123,11 +123,9 @@ if(CMAKE_SOURCE_DIR STREQUAL PROJECT_SOURCE_DIR)
 
 			/wd4100 # warning C4100: unreferenced formal parameter
 			/wd4244 # warning C4244: '=': conversion from 'double' to 'int32_t', possible loss of data
-			)
+		)
    		message(STATUS "MSVC Compile Flags:")
     		message(STATUS "CMAKE_CXX_FLAGS: ${CMAKE_CXX_FLAGS}")
-      		get_target_property(compile_defs ecl COMPILE_DEFINITIONS)
-		message(STATUS "App compile definitions are: " ${compile_defs})
 	elseif(CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_GNUCXX)
 		add_compile_options(
 			-pedantic
