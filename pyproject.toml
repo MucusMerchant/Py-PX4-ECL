@@ -2,8 +2,6 @@
 name = "ecl"
 version = "1.0.0"
 description = "Your package description"
-author = "Andrew Shen-Costello"
-author_email = "andrewshencostello@gmail.com"
 readme = "README.md"
 
 [build-system]
