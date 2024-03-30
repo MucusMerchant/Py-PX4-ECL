@@ -50,6 +50,12 @@ jobs:
       - name: Build sdist
         run: |
           python3 -m build --wheel --outdir wheelhouse
+        
+      - name: Upload binary
+        uses: actions/upload-artifact@v4
+        with:
+          name: sdist
+          path: wheelhouse/*.whl
 
       - name: Install from sdist
         run: |
@@ -58,9 +64,3 @@ jobs:
       - name: Check sdist
         run: |
           python3 -m twine check wheelhouse/*
-
-      - name: Upload binary
-        uses: actions/upload-artifact@v4
-        with:
-          name: sdist
-          path: wheelhouse/*.whl
