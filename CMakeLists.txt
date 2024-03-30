@@ -37,13 +37,6 @@ project(ECL CXX)
 
 message(STATUS "PX4 ECL: Very lightweight Estimation & Control Library meow meow ${git_tag}")
 
-set(CMAKE_CXX_STANDARD 14)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
-set(CMAKE_CXX_EXTENSIONS ON)
-set(CMAKE_CXX_COMPILER "C:/mingw64/bin")
-
-
 if(POLICY CMP0057)
     cmake_policy(SET CMP0057 NEW)
 endif()
@@ -59,6 +52,13 @@ add_subdirectory(pybind11)
 pybind11_add_module(ecl src/binder.cpp)
 target_compile_features(ecl PRIVATE cxx_std_14)
 target_compile_options(ecl PRIVATE -fPIC)
+
+set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+set(CMAKE_CXX_EXTENSIONS ON)
+set(CMAKE_CXX_COMPILER "C:/mingw64/bin")
+
 
 if(NOT CMAKE_BUILD_TYPE)
 	# force debug builds if we test ECL as standalone
