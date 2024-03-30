@@ -49,7 +49,7 @@ jobs:
           
       - name: Build sdist
         run: |
-          python3 -m build --wheel --outdir wheelhouse
+          python3 -m build -c mingw32 --wheel --outdir wheelhouse
 
       - name: Install from sdist
         run: |
