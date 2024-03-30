@@ -53,7 +53,7 @@ jobs:
 
       - name: Install from sdist
         run: |
-          pip install --compiler=mingw64 wheelhouse/ecl-0.0.1.tar.gz
+          pip install --global-option --compiler=mingw64 wheelhouse/ecl-0.0.1.tar.gz
 
       - name: Check sdist
         run: |
