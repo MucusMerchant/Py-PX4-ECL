@@ -50,12 +50,6 @@ jobs:
 
       - name: Put MSYS2_MinGW64 on PATH
         run: echo "D:/a/_temp/msys64/mingw64/bin" >> $GITHUB_PATH
-
-      - name: Upload binary artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: my_binary
-          path: build/all/*.pyd
           
       - name: Build sdist
         run: |
@@ -66,6 +60,11 @@ jobs:
         with:
           name: sdist
           path: wheelhouse/*.whl
+
+      - name: Install ecl
+        run: |
+          pip install wheelhouse/ecl-0.0.1-cp310-cp310-win_amd64.whl
+          python3 -c ‘import ecl'
 
       - name: Install from sdist
         run: |
