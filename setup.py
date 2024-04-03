@@ -138,5 +138,10 @@ setup(
     ext_modules=[CMakeExtension("ecl")],
     cmdclass={"build_ext": CMakeBuild},
     zip_safe=False,
+    options={
+        'build_ext': {
+            'macosx_deployment_target': '12.0'
+        }
+    }
     python_requires=">=3.10",
 )
