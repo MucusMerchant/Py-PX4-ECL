@@ -16,6 +16,8 @@ jobs:
     name: Source distribution
     runs-on: windows-latest
     if: startsWith(github.ref_name, 'docs') != true
+    env:
+      CMAKE_GENERATOR: "MinGW Makefiles"
 
     steps:
       - name: Checkout code
