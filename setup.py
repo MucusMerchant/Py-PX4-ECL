@@ -142,6 +142,6 @@ setup(
         'build_ext': {
             'macosx_deployment_target': '12.0'
         }
-    }
+    },
     python_requires=">=3.10",
 )
