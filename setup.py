@@ -15,6 +15,12 @@ PLAT_TO_CMAKE = {
     "win-arm64": "ARM64",
 }
 
+link_args = ['-static-libgcc',
+             '-static-libstdc++',
+             '-Wl,-Bstatic,--whole-archive',
+             '-lwinpthread',
+             '-Wl,--no-whole-archive']
+
 __location__ = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__)))
 with open(os.path.join(__location__,"README.md"), encoding="utf-8") as f:
     long_description = f.read()
@@ -117,6 +123,11 @@ class CMakeBuild(build_ext):
         build_temp = Path(self.build_temp) / ext.name
         if not build_temp.exists():
             build_temp.mkdir(parents=True)
+
+        if self.compiler.compiler_type == 'mingw32':
+            print("FUCK")
+            for e in self.extensions:
+                e.extra_link_args = link_args
 
         subprocess.run(
             ["cmake", ext.sourcedir, *cmake_args], cwd=build_temp, check=True
