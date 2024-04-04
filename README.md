@@ -52,7 +52,7 @@ PYBIND11_MODULE(ecl, m) {
 ```
 note: &Ekf::setEkfGlobalOriginAltitude' breaks the module because it is not implemented
 
-### Worst part: Getting Matrix library to work with numpy and python buffer
+### Getting Matrix library to work with numpy and python buffer
 note, we need to pass numpy arrays/matrixes with dtype=np.float32 or we get runtime error thrown at us
 Also, only the casting functionality is exposed to Python (this simplifies this step a little). ALL other operations are either done in Numpy or internally by Ekf(), etc.
 
