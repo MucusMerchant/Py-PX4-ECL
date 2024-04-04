@@ -15,10 +15,14 @@ C++ is too hard for dumbass engineers, Python makes data handling, graphing very
 documenting this in case me or another poor soul has to do this again
 
 ## getting started
->pip install pybind11
->git clone https://github.com/pybind/pybind11.git into the main directory
+```
+> pip install pybind11
+> git clone https://github.com/pybind/pybind11.git into the main directory
+```
 or
->git submodule update --init --recursive
+```
+> git submodule update --init --recursive
+```
 
 Add the following lines to CMakeLists.txt after subdirectories:
 ```
@@ -127,14 +131,18 @@ TODO: overall finish binding public interface to python
 TODO: get versions of literally everything being used here (gcc, cmake, all libraries, etc)
 
 To build C++ Library and shared objects file:
->mkdir build
->cd build
->cmake ..
->make [target]
+```
+> mkdir build
+> cd build
+> cmake ..
+> make [target]
+```
 
 To build Python wheel (to be stored in './dist') using CMake:
->pip install wheel
->python3 setup.py bdist_wheel
+```
+> pip install wheel
+> python3 setup.py bdist_wheel
+```
 
 **Very lightweight Estimation & Control Library.**
 
