@@ -43,6 +43,14 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_CXX_EXTENSIONS ON)
 set(CMAKE_OSX_DEPLOYMENT_TARGET "12.0")
 
+add_link_options(
+	-static-libgcc
+        -static-libstdc++
+        -Wl,-Bstatic,--whole-archive
+        -lwinpthread
+        -Wl,--no-whole-archive
+)
+
 if(POLICY CMP0057)
     cmake_policy(SET CMP0057 NEW)
 endif()
