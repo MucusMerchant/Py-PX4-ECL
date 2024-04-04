@@ -63,7 +63,7 @@ jobs:
         - name: Upload binary
           uses: actions/upload-artifact@v4
           with:
-            name: sdist
+            name: wheel-${{ matrix.os }}
             path: wheelhouse/*.whl
   
         - name: Install and import ecl
