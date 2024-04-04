@@ -28,7 +28,7 @@ jobs:
         - name: Setup Python
           uses: actions/setup-python@v5
           with:
-            python-version: '3.10'
+            python-version: '3.11'
           
         - name: Setup CMake
           uses: jwlawson/actions-setup-cmake@v2.0
@@ -53,7 +53,7 @@ jobs:
            # make
             
         - name: Set deployment target (macOS)
-          run: echo "MACOSX_DEPLOYMENT_TARGET=12.0" >> $GITHUB_ENV 
+          run: echo "MACOSX_DEPLOYMENT_TARGET=14.0" >> $GITHUB_ENV 
           if: matrix.os == 'macos-latest'
   
         - name: Build wheel
