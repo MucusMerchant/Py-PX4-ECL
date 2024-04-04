@@ -46,9 +46,11 @@ jobs:
           #with:
             #version: "10.0"
     
-        #- name: build
-          #run: |
-            #make CC=clang
+        - name: build
+          env:
+            CXX: clang++
+          run: |
+            make
             
         - name: Set deployment target (macOS)
           run: echo "MACOSX_DEPLOYMENT_TARGET=12.0" >> $GITHUB_ENV 
