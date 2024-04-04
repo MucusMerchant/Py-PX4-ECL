@@ -124,10 +124,10 @@ class CMakeBuild(build_ext):
         if not build_temp.exists():
             build_temp.mkdir(parents=True)
 
-        if self.compiler.compiler_type == 'mingw32':
-            print("FUCK")
-            for e in self.extensions:
-                e.extra_link_args = link_args
+        #if self.compiler.compiler_type == 'mingw32':
+        print("FUCK")
+        for e in self.extensions:
+            e.extra_link_args = link_args
 
         subprocess.run(
             ["cmake", ext.sourcedir, *cmake_args], cwd=build_temp, check=True
