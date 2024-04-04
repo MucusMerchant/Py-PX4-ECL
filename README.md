@@ -1,4 +1,7 @@
-# ECL
+# PX4-ECL
+## Links to the original library
+[EKF Documentation and Tuning Guide](https://docs.px4.io/master/en/advanced_config/tuning_the_ecl_ekf.html)
+[PX4-ECL GitHub Repo](https://github.com/PX4/PX4-ECL)
 
 ## Working on this library in VSCode on a windows machine! 
 
