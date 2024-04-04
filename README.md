@@ -14,8 +14,7 @@ make sure to change google_test to v1.11 (https://github.com/google/googletest/a
 
 ## Miserable process of interfacing w/ Python D,:
 ### motivations
-C++ is too hard for dumbass engineers, Python makes data handling, graphing very easy
-documenting this in case me or another poor soul has to do this again
+C++ is too hard for dumbass engineers, Python makes data handling, graphing very easy. Also, C++ is not very portable if you use non-standard C++14 extensions like this library does. By building wheels for MacOS, Linux, and Windows that are pip-installable, I hopefully save a few people from headaches dealing with CMake, compilers, and arcane build systems.
 
 ## getting started
 ```
