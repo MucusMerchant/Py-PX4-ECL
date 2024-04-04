@@ -117,6 +117,7 @@ if(CMAKE_SOURCE_DIR STREQUAL PROJECT_SOURCE_DIR)
 			/wd4244 # warning C4244: '=': conversion from 'double' to 'int32_t', possible loss of data
 		)
   	elseif(MINGW)
+   		# this is necessary because MINGW has its own std libraries that are not linked to your executable by default
 		add_link_options(
 			-static-libgcc
 		        -static-libstdc++
