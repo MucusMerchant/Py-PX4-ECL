@@ -41,10 +41,10 @@ jobs:
             python3 -m pip install --upgrade pip
             python3 -m pip install --upgrade build
 
-        - name: Install LLVM and Clang
-          uses: KyleMayes/install-llvm-action@v2
-          with:
-            version: "10.0"
+        #- name: Install LLVM and Clang
+          #uses: KyleMayes/install-llvm-action@v2
+          #with:
+            #version: "10.0"
     
         #- name: build
           #run: |
