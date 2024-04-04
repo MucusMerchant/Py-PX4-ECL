@@ -39,9 +39,9 @@ jobs:
           python3 -m pip install --upgrade build
           pip install twine check-manifest
 
-      #- name: build
-        #run: |
-          #make
+      - name: build
+        run: |
+          make CC=clang
       - uses: msys2/setup-msys2@v2
         with:
           update: true
