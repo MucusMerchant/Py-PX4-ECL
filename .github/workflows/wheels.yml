@@ -37,7 +37,18 @@ jobs:
           run: |
             python3 -m pip install --upgrade pip
             python3 -m pip install --upgrade build
-  
+            
+        - uses: msys2/setup-msys2@v2
+          with:
+            update: true
+            install: >-
+              mingw-w64-x86_64-ninja
+          if: matrix.os == 'windows-latest'
+
+        - name: Put MSYS2_MinGW64 on PATH
+          run: echo "D:/a/_temp/msys64/mingw64/bin" >> $GITHUB_PATH
+          if: matrix.os == 'windows-latest'
+    
         #- name: build
           #run: |
             #make
