@@ -70,5 +70,5 @@ jobs:
   
         - name: Install and import ecl
           run: |
-            python3 -m pip install --no-index --no-deps wheelhouse/ecl-0.0.1-cp310-cp310-win_amd64.whl
+            python3 -m pip install --find-links=wheelhouse ecl
             python3 -c 'import ecl'
