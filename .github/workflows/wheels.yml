@@ -70,5 +70,5 @@ jobs:
   
         - name: Install and import ecl
           run: |
-            python3 -m pip install --find-links=wheelhouse ecl
+            python3 -m pip install --no-index --find-links=wheelhouse ecl
             python3 -c 'import ecl'
