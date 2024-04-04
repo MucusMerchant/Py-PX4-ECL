@@ -8,11 +8,12 @@ In general, please refer the the original documentation provided by PixHawk. All
 ```
 >>> from ecl import Vector3f
 >>> import numpy as np
->>> n = np.array([[0,10,20]], dtype = np.float32) 
+>>> n = np.array([[0,10,20]], dtype = np.float32)
+>>> n = n.transpose()
 >>> v = Vector3f(n)
 >>> nv = np.array(v)
 ```
-Note (1) that it is necessary to specify 'dtype = np.float32' and (2) that the numpy array passed to Vector3f must be two-dimensional, even though it represents a vector. Also note that the conversion do not occur in-place, making pass-by-reference impossible.
+Note (1) that it is necessary to specify 'dtype = np.float32' and (2) that the numpy array passed to Vector3f must be two-dimensional, even though it represents a vector. In this case, it also needs to be transposed to comply with Vector3f stride expectations. Incorrect array dimensions will break your code without raising any errors. Also note that the conversion do not occur in-place, making pass-by-reference impossible.
 
 ## Working on this library in VSCode on a windows machine! 
 
