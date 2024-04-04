@@ -43,14 +43,6 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_CXX_EXTENSIONS ON)
 set(CMAKE_OSX_DEPLOYMENT_TARGET "12.0")
 
-add_link_options(
-	-static-libgcc
-        -static-libstdc++
-        -Wl,-Bstatic,--whole-archive
-        -lwinpthread
-        -Wl,--no-whole-archive
-)
-
 if(POLICY CMP0057)
     cmake_policy(SET CMP0057 NEW)
 endif()
@@ -123,6 +115,14 @@ if(CMAKE_SOURCE_DIR STREQUAL PROJECT_SOURCE_DIR)
 
 			/wd4100 # warning C4100: unreferenced formal parameter
 			/wd4244 # warning C4244: '=': conversion from 'double' to 'int32_t', possible loss of data
+		)
+  	elseif(MINGW)
+		add_link_options(
+			-static-libgcc
+		        -static-libstdc++
+		        -Wl,-Bstatic,--whole-archive
+		        -lwinpthread
+		        -Wl,--no-whole-archive
 		)
 	elseif(CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_GNUCXX)
 		add_compile_options(
