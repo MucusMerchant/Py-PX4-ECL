@@ -3,6 +3,17 @@
 - [EKF Documentation and Tuning Guide](https://docs.px4.io/master/en/advanced_config/tuning_the_ecl_ekf.html)
 - [PX4-ECL GitHub Repo](https://github.com/PX4/PX4-ECL)
 
+## Some notes for use in Python
+In general, please refer the the original documentation provided by PixHawk. All matrix types (including vectors) are equivalent to numpy arrays. Below is an example of converting between the two types:
+```
+>>> from ecl import Vector3f
+>>> import numpy as np
+>>> n = np.array([[0,10,20]], dtype = np.float32) 
+>>> v = Vector3f(n)
+>>> nv = np.array(v)
+```
+Note (1) that it is necessary to specify 'dtype = np.float32' and (2) that the numpy array passed to Vector3f must be two-dimensional, even though it represents a vector. Also note that the conversion do not occur in-place, making pass-by-reference impossible.
+
 ## Working on this library in VSCode on a windows machine! 
 
 First install Windows Subsystem for Linux + some distribution (I use ubuntu). Use the command 'wsl --install' in Windows PowerShell.
