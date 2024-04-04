@@ -51,11 +51,6 @@ cmake_policy(SET CMP0054 NEW)
 
 find_package(Python3 COMPONENTS Interpreter Development REQUIRED)
 
-#message("Python_FOUND:${Python_FOUND}")
-#message("Python_VERSION:${Python_VERSION}")
-#message("Python_Development_FOUND:${Python_Development_FOUND}")
-#message("Python_LIBRARIES:${Python_LIBRARIES}")
-
 if(NOT CMAKE_BUILD_TYPE)
 	# force debug builds if we test ECL as standalone
 	if(BUILD_TESTING AND CMAKE_SOURCE_DIR STREQUAL PROJECT_SOURCE_DIR)
@@ -122,8 +117,6 @@ if(CMAKE_SOURCE_DIR STREQUAL PROJECT_SOURCE_DIR)
 			/wd4100 # warning C4100: unreferenced formal parameter
 			/wd4244 # warning C4244: '=': conversion from 'double' to 'int32_t', possible loss of data
 		)
-   		message(STATUS "MSVC Compile Flags:")
-    		message(STATUS "CMAKE_CXX_FLAGS: ${CMAKE_CXX_FLAGS}")
 	elseif(CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_GNUCXX)
 		add_compile_options(
 			-pedantic
