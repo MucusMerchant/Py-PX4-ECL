@@ -3,18 +3,28 @@
 - [PX4-ECL GitHub Repo](https://github.com/PX4/PX4-ECL)
 - [EKF Documentation and Tuning Guide](https://docs.px4.io/master/en/advanced_config/tuning_the_ecl_ekf.html)
 
-## Some notes for use in Python
-In general, please refer the the original documentation provided by PixHawk. All matrix types (including vectors) are equivalent to numpy arrays. Below is an example of converting between the two types:
+## Notes for use in Python
+
+As of now, the Python bindings do not have any documentation. In general, please refer the the original documentation provided by PixHawk.
+
+### Numpy and the Matrix library
+All matrix types (including vectors) are equivalent to numpy arrays. Below is an example of converting between the two types:
 ```
 >>> import ecl
 >>> import numpy as np
 >>> n = np.array([[0,10,20]], dtype = np.float32)
->>> n = n.transpose()
->>> v = ecl.Vector3f(n)
+>>> v = ecl.Vector3f(n.transpose())
 >>> nv = np.array(v)
 ```
-Note (1) that it is necessary to specify 'dtype = np.float32' and (2) that the numpy array passed to Vector3f must be two-dimensional, even though it represents a vector. In this case, it also needs to be transposed to comply with Vector3f stride expectations. Incorrect array dimensions will break your code without raising any errors. Also note that the conversion do not occur in-place, making pass-by-reference impossible.
+Note (1) that it is necessary to specify 'dtype = np.float32' and (2) that the numpy array passed to Vector3f must be two-dimensional, even though it represents a vector. In this case, it also needs to be transposed to comply with Vector3f stride expectations. Incorrect array dimensions will break your code without raising any errors. This can get confusing, so make sure to test your logic with simple cases.
 
+If you are indexing a 2-dimensional dataframe, you can preserve the dimensionality of indexed vectors using 'np.newaxis':
+```
+>>> data = np.array([[1,2,3],[4,5,6],[7,8,9]], dtype = np.float32)
+>>> n = data[0,np.newaxis]
+>>> v = ecl.Vector3f(n.transpose())
+>>> nv = np.array(v)
+```
 ## Working on this library in VSCode on a windows machine! 
 
 First install Windows Subsystem for Linux + some distribution (I use ubuntu). Use the command 'wsl --install' in Windows PowerShell.
@@ -62,7 +72,7 @@ PYBIND11_MODULE(ecl, m) {
     .def(blah); // add bindings for all functions in Ekf.h and EstimatorInterface.h
 }
 ```
-note: &Ekf::setEkfGlobalOriginAltitude' breaks the module because it is not implemented
+note: '&Ekf::setEkfGlobalOriginAltitude' breaks the module because it is not implemented
 
 ### Getting Matrix library to work with numpy and python buffer
 Only the casting functionalities of Matrix types need to be exposed to Python. ALL other operations are either done in Numpy or internally by Ekf(), etc.
