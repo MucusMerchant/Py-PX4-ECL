@@ -62,10 +62,6 @@ public:
 	virtual bool collect_gps(const gps_message &gps) = 0;
 	virtual ~EstimatorInterface() = default;
 	void setIMUData(const imuSample &imu_sample);
-	// testing Vector3 return and parameter
-	Vector3f &hi(Vector3f &a) {
-		return a;
-	}
 
 	/*
 	Returns  following IMU vibration metrics in the following array locations
