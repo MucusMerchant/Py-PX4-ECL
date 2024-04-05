@@ -146,6 +146,8 @@ PYBIND11_MODULE(ecl, m) {
     bindMatrix<matrix::Dcm<float>,float>(m, "Dcmf");
     bindMatrix<matrix::AxisAngle<float>,float>(m, "AxisAnglef");
     bindMatrix<matrix::Euler<float>,float>(m, "Eulerf");
+    bindMatrix<matrix::Vector<float, 24>,float>(m, "Vector24f");
+    bindMatrix<matrix::SquareMatrix<float, 4>, float>(m, "Matrix4f");
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 | Struct bindings for sensor input and filter tuning                      |
@@ -167,21 +169,24 @@ PYBIND11_MODULE(ecl, m) {
         .def_readwrite("vel_ned", &gps_message::vel_ned)
         .def_readwrite("vel_ned_valid", &gps_message::vel_ned_valid)
         .def_readwrite("nsats", &gps_message::nsats)
-        .def_readwrite("pdop", &gps_message::pdop);
+        .def_readwrite("pdop", &gps_message::pdop)
+        ;
 
     py::class_<outputSample>(m, "outputSample")
         .def(py::init<>())
         .def_readwrite("time_us", &outputSample::time_us)
         .def_readwrite("quat_nominal", &outputSample::quat_nominal)
         .def_readwrite("vel", &outputSample::vel)
-        .def_readwrite("pos", &outputSample::pos);
+        .def_readwrite("pos", &outputSample::pos)
+        ;
 
     py::class_<outputVert>(m, "outputVert")
         .def(py::init<>())
         .def_readwrite("time_us", &outputVert::time_us)
         .def_readwrite("vert_vel", &outputVert::vert_vel)
         .def_readwrite("vert_vel_integ", &outputVert::vert_vel_integ)
-        .def_readwrite("dt", &outputVert::dt);
+        .def_readwrite("dt", &outputVert::dt)
+        ;
 
     py::class_<imuSample>(m, "imuSample")
         .def(py::init<>())
@@ -190,6 +195,8 @@ PYBIND11_MODULE(ecl, m) {
         .def_readwrite("delta_vel", &imuSample::delta_vel)
         .def_readwrite("delta_ang_dt", &imuSample::delta_ang_dt)
         .def_readwrite("delta_vel_dt", &imuSample::delta_vel_dt)
+        // this is commented for now because arrays don't work with pybind. We might not need this at all
+        // i don't think it is even used in the ekf code
         //.def_readwrite("delta_vel_clipping", &imuSample::delta_vel_clipping)
         ;
 
@@ -202,29 +209,34 @@ PYBIND11_MODULE(ecl, m) {
         .def_readwrite("yaw", &gpsSample::yaw)
         .def_readwrite("hacc", &gpsSample::hacc)
         .def_readwrite("vacc", &gpsSample::vacc)
-        .def_readwrite("sacc", &gpsSample::sacc);
+        .def_readwrite("sacc", &gpsSample::sacc)
+        ;
 
     py::class_<magSample>(m, "magSample")
         .def(py::init<>())
         .def_readwrite("time_us", &magSample::time_us)
-        .def_readwrite("mag", &magSample::mag);
+        .def_readwrite("mag", &magSample::mag)
+        ;
 
     py::class_<baroSample>(m, "baroSample")
         .def(py::init<>())
         .def_readwrite("time_us", &baroSample::time_us)
-        .def_readwrite("hgt", &baroSample::hgt);
+        .def_readwrite("hgt", &baroSample::hgt)
+        ;
 
     py::class_<rangeSample>(m, "rangeSample")
         .def(py::init<>())
         .def_readwrite("time_us", &rangeSample::time_us)
         .def_readwrite("rng", &rangeSample::rng)
-        .def_readwrite("quality", &rangeSample::quality);
+        .def_readwrite("quality", &rangeSample::quality)
+        ;
 
     py::class_<airspeedSample>(m, "airspeedSample")
         .def(py::init<>())
         .def_readwrite("time_us", &airspeedSample::time_us)
         .def_readwrite("true_airspeed", &airspeedSample::true_airspeed)
-        .def_readwrite("eas2tas", &airspeedSample::eas2tas);
+        .def_readwrite("eas2tas", &airspeedSample::eas2tas)
+        ;
 
     py::class_<flowSample>(m, "flowSample")
         .def(py::init<>())
@@ -232,7 +244,8 @@ PYBIND11_MODULE(ecl, m) {
         .def_readwrite("flow_xy_rad", &flowSample::flow_xy_rad)
         .def_readwrite("gyro_xyz", &flowSample::gyro_xyz)
         .def_readwrite("dt", &flowSample::dt)
-        .def_readwrite("quality", &flowSample::quality);
+        .def_readwrite("quality", &flowSample::quality)
+        ;
 
     py::class_<extVisionSample>(m, "extVisionSample")
         .def(py::init<>())
@@ -243,7 +256,8 @@ PYBIND11_MODULE(ecl, m) {
         .def_readwrite("posVar", &extVisionSample::posVar)
         .def_readwrite("velCov", &extVisionSample::velCov)
         .def_readwrite("angVar", &extVisionSample::angVar)
-        .def_readwrite("vel_frame", &extVisionSample::vel_frame);
+        .def_readwrite("vel_frame", &extVisionSample::vel_frame)
+        ;
 
     // parameter struct, accessed (by reference) with getParamHandle(), can be directly modified to tune the filter
     py::class_<parameters>(m, "parameters")
@@ -361,7 +375,7 @@ PYBIND11_MODULE(ecl, m) {
         .def_readonly("EKFGSF_reset_count_limit", &parameters::EKFGSF_reset_count_limit)
         ;
     
-    // DELETE: Internal state sample, this actually should not be in the public interface
+    // Internal state sample, this actually should not be in the public interface
     /*
     py::class_<stateSample>(m, "stateSample")
         .def(py::init<>())
@@ -376,6 +390,148 @@ PYBIND11_MODULE(ecl, m) {
         ;
     */
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+| Bindings for status unions/bitmasks                                     |
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+    py::class_<fault_status_u>(m, "FaultStatus")
+        .def_readonly("value", &fault_status_u::value)
+        .def_property_readonly("bad_mag_x", [](fault_status_u& self) -> bool { return self.flags.bad_mag_x; })
+        .def_property_readonly("bad_mag_y", [](fault_status_u& self) -> bool { return self.flags.bad_mag_y; })
+        .def_property_readonly("bad_mag_z", [](fault_status_u& self) -> bool { return self.flags.bad_mag_z; })
+        .def_property_readonly("bad_hdg", [](fault_status_u& self) -> bool { return self.flags.bad_hdg; })
+        .def_property_readonly("bad_mag_decl", [](fault_status_u& self) -> bool { return self.flags.bad_mag_decl; })
+        .def_property_readonly("bad_airspeed", [](fault_status_u& self) -> bool { return self.flags.bad_airspeed; })
+        .def_property_readonly("bad_sideslip", [](fault_status_u& self) -> bool { return self.flags.bad_sideslip; })
+        .def_property_readonly("bad_optflow_X", [](fault_status_u& self) -> bool { return self.flags.bad_optflow_X; })
+        .def_property_readonly("bad_optflow_Y", [](fault_status_u& self) -> bool { return self.flags.bad_optflow_Y; })
+        .def_property_readonly("bad_vel_N", [](fault_status_u& self) -> bool { return self.flags.bad_vel_N; })
+        .def_property_readonly("bad_vel_E", [](fault_status_u& self) -> bool { return self.flags.bad_vel_E; })
+        .def_property_readonly("bad_vel_D", [](fault_status_u& self) -> bool { return self.flags.bad_vel_D; })
+        .def_property_readonly("bad_pos_N", [](fault_status_u& self) -> bool { return self.flags.bad_pos_N; })
+        .def_property_readonly("bad_pos_E", [](fault_status_u& self) -> bool { return self.flags.bad_pos_E; })
+        .def_property_readonly("bad_pos_D", [](fault_status_u& self) -> bool { return self.flags.bad_pos_D; })
+        .def_property_readonly("bad_acc_bias", [](fault_status_u& self) -> bool { return self.flags.bad_acc_bias; })
+        .def_property_readonly("bad_acc_vertical", [](fault_status_u& self) -> bool { return self.flags.bad_acc_vertical; })
+        .def_property_readonly("bad_acc_clipping", [](fault_status_u& self) -> bool { return self.flags.bad_acc_clipping; })
+        ;
+    
+    py::class_<innovation_fault_status_u>(m, "InnovationFaultStatus")
+        .def_readonly("value", &innovation_fault_status_u::value)
+        .def_property_readonly("reject_hor_vel", [](innovation_fault_status_u& self) -> bool { return self.flags.reject_hor_vel; })
+        .def_property_readonly("reject_ver_vel", [](innovation_fault_status_u& self) -> bool { return self.flags.reject_ver_vel; })
+        .def_property_readonly("reject_hor_pos", [](innovation_fault_status_u& self) -> bool { return self.flags.reject_hor_pos; })
+        .def_property_readonly("reject_ver_pos", [](innovation_fault_status_u& self) -> bool { return self.flags.reject_ver_pos; })
+        .def_property_readonly("reject_mag_x", [](innovation_fault_status_u& self) -> bool { return self.flags.reject_mag_x; })
+        .def_property_readonly("reject_mag_y", [](innovation_fault_status_u& self) -> bool { return self.flags.reject_mag_y; })
+        .def_property_readonly("reject_mag_z", [](innovation_fault_status_u& self) -> bool { return self.flags.reject_mag_z; })
+        .def_property_readonly("reject_yaw", [](innovation_fault_status_u& self) -> bool { return self.flags.reject_yaw; })
+        .def_property_readonly("reject_airspeed", [](innovation_fault_status_u& self) -> bool { return self.flags.reject_airspeed; })
+        .def_property_readonly("reject_sideslip", [](innovation_fault_status_u& self) -> bool { return self.flags.reject_sideslip; })
+        .def_property_readonly("reject_hagl", [](innovation_fault_status_u& self) -> bool { return self.flags.reject_hagl; })
+        .def_property_readonly("reject_optflow_X", [](innovation_fault_status_u& self) -> bool { return self.flags.reject_optflow_X; })
+        .def_property_readonly("reject_optflow_Y", [](innovation_fault_status_u& self) -> bool { return self.flags.reject_optflow_Y; })
+        ;
+
+    py::class_<gps_check_fail_status_u>(m, "GpsCheckFailStatusU")
+        .def_readonly("value", &gps_check_fail_status_u::value)
+        .def_property_readonly("fix", [](gps_check_fail_status_u& self) -> bool { return self.flags.fix; })
+        .def_property_readonly("nsats", [](gps_check_fail_status_u& self) -> bool { return self.flags.nsats; })
+        .def_property_readonly("pdop", [](gps_check_fail_status_u& self) -> bool { return self.flags.pdop; })
+        .def_property_readonly("hacc", [](gps_check_fail_status_u& self) -> bool { return self.flags.hacc; })
+        .def_property_readonly("vacc", [](gps_check_fail_status_u& self) -> bool { return self.flags.vacc; })
+        .def_property_readonly("sacc", [](gps_check_fail_status_u& self) -> bool { return self.flags.sacc; })
+        .def_property_readonly("hdrift", [](gps_check_fail_status_u& self) -> bool { return self.flags.hdrift; })
+        .def_property_readonly("vdrift", [](gps_check_fail_status_u& self) -> bool { return self.flags.vdrift; })
+        .def_property_readonly("hspeed", [](gps_check_fail_status_u& self) -> bool { return self.flags.hspeed; })
+        .def_property_readonly("vspeed", [](gps_check_fail_status_u& self) -> bool { return self.flags.vspeed; })
+        ;
+
+    py::class_<filter_control_status_u>(m, "FilterControlStatusU")
+        .def_readonly("value", &filter_control_status_u::value)
+        .def_property_readonly("tilt_align", [](filter_control_status_u& self) -> bool { return self.flags.tilt_align; })
+        .def_property_readonly("yaw_align", [](filter_control_status_u& self) -> bool { return self.flags.yaw_align; })
+        .def_property_readonly("gps", [](filter_control_status_u& self) -> bool { return self.flags.gps; })
+        .def_property_readonly("opt_flow", [](filter_control_status_u& self) -> bool { return self.flags.opt_flow; })
+        .def_property_readonly("mag_hdg", [](filter_control_status_u& self) -> bool { return self.flags.mag_hdg; })
+        .def_property_readonly("mag_3D", [](filter_control_status_u& self) -> bool { return self.flags.mag_3D; })
+        .def_property_readonly("mag_dec", [](filter_control_status_u& self) -> bool { return self.flags.mag_dec; })
+        .def_property_readonly("in_air", [](filter_control_status_u& self) -> bool { return self.flags.in_air; })
+        .def_property_readonly("wind", [](filter_control_status_u& self) -> bool { return self.flags.wind; })
+        .def_property_readonly("baro_hgt", [](filter_control_status_u& self) -> bool { return self.flags.baro_hgt; })
+        .def_property_readonly("rng_hgt", [](filter_control_status_u& self) -> bool { return self.flags.rng_hgt; })
+        .def_property_readonly("gps_hgt", [](filter_control_status_u& self) -> bool { return self.flags.gps_hgt; })
+        .def_property_readonly("ev_pos", [](filter_control_status_u& self) -> bool { return self.flags.ev_pos; })
+        .def_property_readonly("ev_yaw", [](filter_control_status_u& self) -> bool { return self.flags.ev_yaw; })
+        .def_property_readonly("ev_hgt", [](filter_control_status_u& self) -> bool { return self.flags.ev_hgt; })
+        .def_property_readonly("fuse_beta", [](filter_control_status_u& self) -> bool { return self.flags.fuse_beta; })
+        .def_property_readonly("mag_field_disturbed", [](filter_control_status_u& self) -> bool { return self.flags.mag_field_disturbed; })
+        .def_property_readonly("fixed_wing", [](filter_control_status_u& self) -> bool { return self.flags.fixed_wing; })
+        .def_property_readonly("mag_fault", [](filter_control_status_u& self) -> bool { return self.flags.mag_fault; })
+        .def_property_readonly("fuse_aspd", [](filter_control_status_u& self) -> bool { return self.flags.fuse_aspd; })
+        .def_property_readonly("gnd_effect", [](filter_control_status_u& self) -> bool { return self.flags.gnd_effect; })
+        .def_property_readonly("rng_stuck", [](filter_control_status_u& self) -> bool { return self.flags.rng_stuck; })
+        .def_property_readonly("gps_yaw", [](filter_control_status_u& self) -> bool { return self.flags.gps_yaw; })
+        .def_property_readonly("mag_aligned_in_flight", [](filter_control_status_u& self) -> bool { return self.flags.mag_aligned_in_flight; })
+        .def_property_readonly("ev_vel", [](filter_control_status_u& self) -> bool { return self.flags.ev_vel; })
+        .def_property_readonly("synthetic_mag_z", [](filter_control_status_u& self) -> bool { return self.flags.synthetic_mag_z; })
+        .def_property_readonly("vehicle_at_rest", [](filter_control_status_u& self) -> bool { return self.flags.vehicle_at_rest; })
+        ;
+    
+    py::class_<ekf_solution_status>(m, "EKFSolutionStatus")
+        .def_readonly("value", &ekf_solution_status::value)
+        .def_property_readonly("attitude", [](ekf_solution_status& self) -> bool { return self.flags.attitude; })
+        .def_property_readonly("velocity_horiz", [](ekf_solution_status& self) -> bool { return self.flags.velocity_horiz; })
+        .def_property_readonly("velocity_vert", [](ekf_solution_status& self) -> bool { return self.flags.velocity_vert; })
+        .def_property_readonly("pos_horiz_rel", [](ekf_solution_status& self) -> bool { return self.flags.pos_horiz_rel; })
+        .def_property_readonly("pos_horiz_abs", [](ekf_solution_status& self) -> bool { return self.flags.pos_horiz_abs; })
+        .def_property_readonly("pos_vert_abs", [](ekf_solution_status& self) -> bool { return self.flags.pos_vert_abs; })
+        .def_property_readonly("pos_vert_agl", [](ekf_solution_status& self) -> bool { return self.flags.pos_vert_agl; })
+        .def_property_readonly("const_pos_mode", [](ekf_solution_status& self) -> bool { return self.flags.const_pos_mode; })
+        .def_property_readonly("pred_pos_horiz_rel", [](ekf_solution_status& self) -> bool { return self.flags.pred_pos_horiz_rel; })
+        .def_property_readonly("pred_pos_horiz_abs", [](ekf_solution_status& self) -> bool { return self.flags.pred_pos_horiz_abs; })
+        .def_property_readonly("gps_glitch", [](ekf_solution_status& self) -> bool { return self.flags.gps_glitch; })
+        .def_property_readonly("accel_error", [](ekf_solution_status& self) -> bool { return self.flags.accel_error; })
+        ;
+    
+    py::class_<terrain_fusion_status_u>(m, "TerrainFusionStatus")
+        .def_readonly("value", &terrain_fusion_status_u::value)
+        .def_property_readonly("range_finder", [](terrain_fusion_status_u& self) -> bool { return self.flags.range_finder; })
+        .def_property_readonly("flow", [](terrain_fusion_status_u& self) -> bool { return self.flags.flow; })
+        ;
+
+    py::class_<information_event_status_u>(m, "InformationEventStatus")
+        .def_readonly("value", &information_event_status_u::value)
+        .def_property_readonly("gps_checks_passed", [](information_event_status_u& self) -> bool { return self.flags.gps_checks_passed; })
+        .def_property_readonly("reset_vel_to_gps", [](information_event_status_u& self) -> bool { return self.flags.reset_vel_to_gps; })
+        .def_property_readonly("reset_vel_to_flow", [](information_event_status_u& self) -> bool { return self.flags.reset_vel_to_flow; })
+        .def_property_readonly("reset_vel_to_vision", [](information_event_status_u& self) -> bool { return self.flags.reset_vel_to_vision; })
+        .def_property_readonly("reset_vel_to_zero", [](information_event_status_u& self) -> bool { return self.flags.reset_vel_to_zero; })
+        .def_property_readonly("reset_pos_to_last_known", [](information_event_status_u& self) -> bool { return self.flags.reset_pos_to_last_known; })
+        .def_property_readonly("reset_pos_to_gps", [](information_event_status_u& self) -> bool { return self.flags.reset_pos_to_gps; })
+        .def_property_readonly("reset_pos_to_vision", [](information_event_status_u& self) -> bool { return self.flags.reset_pos_to_vision; })
+        .def_property_readonly("starting_gps_fusion", [](information_event_status_u& self) -> bool { return self.flags.starting_gps_fusion; })
+        .def_property_readonly("starting_vision_pos_fusion", [](information_event_status_u& self) -> bool { return self.flags.starting_vision_pos_fusion; })
+        .def_property_readonly("starting_vision_vel_fusion", [](information_event_status_u& self) -> bool { return self.flags.starting_vision_vel_fusion; })
+        .def_property_readonly("starting_vision_yaw_fusion", [](information_event_status_u& self) -> bool { return self.flags.starting_vision_yaw_fusion; })
+        .def_property_readonly("yaw_aligned_to_imu_gps", [](information_event_status_u& self) -> bool { return self.flags.yaw_aligned_to_imu_gps; })
+        ;
+
+    py::class_<warning_event_status_u>(m, "WarningEventStatus")
+        .def_readonly("value", &warning_event_status_u::value)
+        .def_property_readonly("gps_quality_poor", [](warning_event_status_u& self) -> bool { return self.flags.gps_quality_poor; })
+        .def_property_readonly("gps_fusion_timout", [](warning_event_status_u& self) -> bool { return self.flags.gps_fusion_timout; })
+        .def_property_readonly("gps_data_stopped", [](warning_event_status_u& self) -> bool { return self.flags.gps_data_stopped; })
+        .def_property_readonly("gps_data_stopped_using_alternate", [](warning_event_status_u& self) -> bool { return self.flags.gps_data_stopped_using_alternate; })
+        .def_property_readonly("height_sensor_timeout", [](warning_event_status_u& self) -> bool { return self.flags.height_sensor_timeout; })
+        .def_property_readonly("stopping_navigation", [](warning_event_status_u& self) -> bool { return self.flags.stopping_navigation; })
+        .def_property_readonly("invalid_accel_bias_cov_reset", [](warning_event_status_u& self) -> bool { return self.flags.invalid_accel_bias_cov_reset; })
+        .def_property_readonly("bad_yaw_using_gps_course", [](warning_event_status_u& self) -> bool { return self.flags.bad_yaw_using_gps_course; })
+        .def_property_readonly("stopping_mag_use", [](warning_event_status_u& self) -> bool { return self.flags.stopping_mag_use; })
+        .def_property_readonly("vision_data_stopped", [](warning_event_status_u& self) -> bool { return self.flags.vision_data_stopped; })
+        .def_property_readonly("emergency_yaw_reset_mag_stopped", [](warning_event_status_u& self) -> bool { return self.flags.emergency_yaw_reset_mag_stopped; })
+        ;
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 | Bindings for Ekf and EstimatorInterface                                 |
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
@@ -384,10 +540,61 @@ PYBIND11_MODULE(ecl, m) {
     py::class_<Ekf, EstimatorInterface>(m, "Ekf")
         // Public functions from EstimatorInterface
         .def(py::init<>())
-        .def("hi", &Ekf::hi)
-        .def("getParamHandle", &Ekf::getParamHandle, py::return_value_policy::reference)
         .def("setIMUData", &Ekf::setIMUData)
+        .def("getImuVibrationMetrics", &Ekf::getImuVibrationMetrics)
+        .def("setMagData", &Ekf::setMagData)
+        .def("setGpsData", &Ekf::setGpsData)
+        .def("setBaroData", &Ekf::setBaroData)
+        .def("setAirspeedData", &Ekf::setAirspeedData)
+        .def("setRangeData", &Ekf::setRangeData)
+        .def("setOpticalFlowData", &Ekf::setOpticalFlowData)
+        .def("setExtVisionData", &Ekf::setExtVisionData)
+        .def("setAuxVelData", &Ekf::setAuxVelData)
+        .def("getParamHandle", &Ekf::getParamHandle)
+        .def("set_in_air_status", &Ekf::set_in_air_status)
+        .def("attitude_valid", &Ekf::attitude_valid)
+        .def("get_in_air_status", &Ekf::get_in_air_status)
+        .def("get_wind_status", &Ekf::get_wind_status)
+        .def("set_is_fixed_wing", &Ekf::set_is_fixed_wing)
+        .def("set_fuse_beta_flag", &Ekf::set_fuse_beta_flag)
+        .def("set_gnd_effect_flag", &Ekf::set_gnd_effect_flag)
+        .def("set_air_density", &Ekf::set_air_density)
+        .def("set_rangefinder_limits", &Ekf::set_rangefinder_limits)
+        .def("set_optical_flow_limits", &Ekf::set_optical_flow_limits)
+        .def("isOnlyActiveSourceOfHorizontalAiding", &Ekf::isOnlyActiveSourceOfHorizontalAiding)
+        .def("isOtherSourceOfHorizontalAidingThan", &Ekf::isOtherSourceOfHorizontalAidingThan)
+        .def("isHorizontalAidingActive", &Ekf::isHorizontalAidingActive)
+        .def("getNumberOfActiveHorizontalAidingSources", &Ekf::getNumberOfActiveHorizontalAidingSources)
+        .def("inertial_dead_reckoning", &Ekf::inertial_dead_reckoning)
+        .def("getQuaternion", &Ekf::getQuaternion)
+        .def("getVelocity", &Ekf::getVelocity)
+        .def("getVelocityDerivative", &Ekf::getVelocityDerivative)
+        .def("getVerticalPositionDerivative", &Ekf::getVerticalPositionDerivative)
+        .def("getPosition", &Ekf::getPosition)
+        .def("get_mag_decl_deg", &Ekf::get_mag_decl_deg)
+        .def("control_status", &Ekf::control_status)
+        .def("control_status_flags", &Ekf::control_status_flags)
+        .def("control_status_prev", &Ekf::control_status_prev)
+        .def("control_status_prev_flags", &Ekf::control_status_prev_flags)
+        .def("fault_status", &Ekf::fault_status)
+        .def("fault_status_flags", &Ekf::fault_status_flags)
+        .def("innov_check_fail_status", &Ekf::innov_check_fail_status)
+        .def("innov_check_fail_status_flags", &Ekf::innov_check_fail_status_flags)
+        .def("warning_event_status", &Ekf::warning_event_status)
+        .def("warning_event_flags", &Ekf::warning_event_flags)
+        .def("clear_warning_events", &Ekf::clear_warning_events)
+        .def("information_event_status", &Ekf::information_event_status)
+        .def("information_event_flags", &Ekf::information_event_flags)
+        .def("clear_information_events", &Ekf::clear_information_events)
+        .def("isVehicleAtRest", &Ekf::isVehicleAtRest)
+        .def("get_dt_imu_avg", &Ekf::get_dt_imu_avg)
+        .def("get_imu_sample_delayed", &Ekf::get_imu_sample_delayed)
+        .def("get_baro_sample_delayed", &Ekf::get_baro_sample_delayed)
+        .def("global_origin_valid", &Ekf::global_origin_valid)
+        .def("global_origin", &Ekf::global_origin)
         .def("print_status", &Ekf::print_status)
+        //.def_static("FILTER_UPDATE_PERIOD_MS", &Ekf::FILTER_UPDATE_PERIOD_MS)
+        //.def_static("FILTER_UPDATE_PERIOD_S", &Ekf::FILTER_UPDATE_PERIOD_S)
 
         // Functions from ekf.h
         .def("init", &Ekf::init)
