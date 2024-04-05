@@ -189,7 +189,7 @@ add_subdirectory(geo_lookup)
 
 add_subdirectory(pybind11)
 pybind11_add_module(ecl src/binder.cpp)
-target_compile_features(ecl PRIVATE cxx_std_14)
+target_compile_features(ecl PRIVATE cxx_std_14) # this fixed annoying compilation errors on Apple Clang
 target_compile_options(ecl PRIVATE -fPIC)
 
 target_link_libraries(ecl PRIVATE ecl_EKF ecl_geo ecl_geo_lookup ecl_airdata)
