@@ -28,7 +28,7 @@ make sure to change google_test to v1.11 (https://github.com/google/googletest/a
 ### motivations
 C++ is too hard for dumbass engineers, Python makes data handling, graphing very easy. Also, C++ is not very portable if you use non-standard C++14 extensions like this library does. By building wheels for MacOS, Linux, and Windows that are pip-installable, I hopefully save a few people from headaches dealing with CMake, compilers, and arcane build systems.
 
-## getting started
+### getting started
 ```
 > pip install pybind11
 > git clone https://github.com/pybind/pybind11.git into the main directory
@@ -53,8 +53,8 @@ add_library(matrix INTERFACE ${MATRIX_SRC})
 add_dependencies(prebuild_targets matrix)
 include_directories(Matrix)
 ```
-In src/binder.cpp (full file will be posted somewhere): 
-* include pybind11 and all headers (e.g. EKF/ekf.h, matrix/math.hpp)
+In `src/binder.cpp`: 
+* include pybind11 and all headers (e.g. `EKF/ekf.h`, `matrix/math.hpp`)
 ```
 namespace py = pybind11;
 PYBIND11_MODULE(ecl, m) {
@@ -65,10 +65,9 @@ PYBIND11_MODULE(ecl, m) {
 note: &Ekf::setEkfGlobalOriginAltitude' breaks the module because it is not implemented
 
 ### Getting Matrix library to work with numpy and python buffer
-note, we need to pass numpy arrays/matrixes with dtype=np.float32 or we get runtime error thrown at us
-Also, only the casting functionality is exposed to Python (this simplifies this step a little). ALL other operations are either done in Numpy or internally by Ekf(), etc.
+Only the casting functionalities of Matrix types need to be exposed to Python. ALL other operations are either done in Numpy or internally by Ekf(), etc.
 
-I referred to the pybind11 docs (https://pybind11.readthedocs.io/en/stable/advanced/pycpp/numpy.html) for interfacing with buffers. This needed to be done for all Matrix types, but I used a template to avoid nightmarish repetitiveness:
+I referred to the pybind11 docs (https://pybind11.readthedocs.io/en/stable/advanced/pycpp/numpy.html) for interfacing with buffers. This needed to be done for all Matrix types, so I used a template to avoid nightmarish repetitiveness:
 ```
 template<typename MType, typename Type>
 void bindMatrix(py::module &m, const std::string &name) {
@@ -110,7 +109,7 @@ void bindMatrix(py::module &m, const std::string &name) {
 }
 ```
 In order for this code to work, some changes in the matrix class were necessary
-In Matrix.hpp, make data pointer accessible by adding a getter:
+In `Matrix.hpp`, make data pointer accessible by adding a getter:
 ```
 Type *data() {
   return &_data[0][0]; // not sure if this works for slice, might not start at 0,0
@@ -127,7 +126,7 @@ explicit Matrix(const Type data_[M*N], ssize_t stride_m, ssize_t stride_n)
   }
 }
 ```
-(not important) Added pointer constructor to Euler:
+(not important) Added missing pointer constructor to `Euler.hpp`:
 ``` 
 explicit Euler(const Type data_[3]) :
     Vector<Type, 3>(data_)
@@ -138,7 +137,7 @@ explicit Euler(const Type data_[3]) :
 
 To test in Python, just run Python3 in same directory as the generated .so file and import ecl. Note that ekf is a submodule of ecl, should be called w/ 'ecl.Ekf'.
 
-make sure ecl_EKF target has 'PROPERTIES POSITION_INDEPENDENT_CODE ON' in EKF/CMakeLists.txt.
+make sure ecl_EKF target has 'PROPERTIES POSITION_INDEPENDENT_CODE ON' in `EKF/CMakeLists.txt`.
 
 TODO [done]: get access to the EstimatorInterface interface. decent solution in the docs: https://pybind11.readthedocs.io/en/stable/advanced/classes.html#binding-protected-member-functions. Still had to move destructor to public, no solution in docs (not ideal, also not a big deal)
 TODO: overall finish binding public interface to python
@@ -151,9 +150,4 @@ To build C++ Library and shared objects file:
 > cmake ..
 > make [target]
 ```
-
-To build Python wheel (to be stored in './dist') using CMake:
-```
-> pip install wheel
-> python3 setup.py bdist_wheel
-```
+To build platform-specific Python wheels that can be installed with pip, manually run `wheels.yml` and download the artifact.
