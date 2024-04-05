@@ -108,8 +108,6 @@ if(CMAKE_SOURCE_DIR STREQUAL PROJECT_SOURCE_DIR)
 		add_compile_options(
 			/W4
 			/WX
-   			/std:c++14
-      			/Y-
 
 			/D_USE_MATH_DEFINES
 
