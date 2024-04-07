@@ -711,8 +711,8 @@ void Ekf::controlGpsFusion()
 			gps_vel_innov_gates(0) = gps_vel_innov_gates(1) = fmaxf(_params.gps_vel_innov_gate, 1.0f);
 
 			// fuse GPS measurement
-			//fuseHorizontalVelocity(_gps_vel_innov, gps_vel_innov_gates, _last_vel_obs_var, _gps_vel_innov_var, _gps_vel_test_ratio);
-			//fuseVerticalVelocity(_gps_vel_innov, gps_vel_innov_gates, _last_vel_obs_var, _gps_vel_innov_var, _gps_vel_test_ratio);
+			fuseHorizontalVelocity(_gps_vel_innov, gps_vel_innov_gates, _last_vel_obs_var, _gps_vel_innov_var, _gps_vel_test_ratio);
+			fuseVerticalVelocity(_gps_vel_innov, gps_vel_innov_gates, _last_vel_obs_var, _gps_vel_innov_var, _gps_vel_test_ratio);
 			fuseHorizontalPosition(_gps_pos_innov, gps_pos_innov_gates, gps_pos_obs_var, _gps_pos_innov_var, _gps_pos_test_ratio);
 		}
 
