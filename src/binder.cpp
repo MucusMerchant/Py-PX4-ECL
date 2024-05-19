@@ -1,4 +1,5 @@
 #include <pybind11/pybind11.h>
+#include <pybind11/stl.h>
 #include <pybind11/numpy.h>
 
 #include <EKF/ekf.h>
@@ -571,7 +572,7 @@ PYBIND11_MODULE(ecl, m) {
         .def("getVelocityDerivative", &Ekf::getVelocityDerivative)
         .def("getVerticalPositionDerivative", &Ekf::getVerticalPositionDerivative)
         .def("getPosition", &Ekf::getPosition)
-        .def("get_mag_decl_deg", &Ekf::get_mag_decl_deg)
+        .def("get_mag_decl_deg", [](Ekf &self) {float f; bool b = self.get_mag_decl_deg(&f); return std::make_tuple(b,f);}) // first example of pass by reference w/ lambda
         .def("control_status", &Ekf::control_status)
         .def("control_status_flags", &Ekf::control_status_flags)
         .def("control_status_prev", &Ekf::control_status_prev)
@@ -599,63 +600,124 @@ PYBIND11_MODULE(ecl, m) {
         // Functions from ekf.h
         .def("init", &Ekf::init)
         .def("update", &Ekf::update)
-        .def("getGpsVelPosInnov", &Ekf::getGpsVelPosInnov)
-        .def("getGpsVelPosInnovVar", &Ekf::getGpsVelPosInnovVar)
-        .def("getEvVelPosInnov", &Ekf::getEvVelPosInnov)
-        .def("getEvVelPosInnovVar", &Ekf::getEvVelPosInnovVar)
-        .def("getBaroHgtInnov", &Ekf::getBaroHgtInnov)
-        .def("getBaroHgtInnovVar", &Ekf::getBaroHgtInnovVar)
-        .def("getBaroHgtInnovRatio", &Ekf::getBaroHgtInnovRatio)
-        .def("getRngHgtInnov", &Ekf::getRngHgtInnov)
-        .def("getRngHgtInnovVar", &Ekf::getRngHgtInnovVar)
-        .def("getRngHgtInnovRatio", &Ekf::getRngHgtInnovRatio)
-        .def("getAuxVelInnov", &Ekf::getAuxVelInnov)
-        .def("getAuxVelInnovVar", &Ekf::getAuxVelInnovVar)
-        .def("getAuxVelInnovRatio", &Ekf::getAuxVelInnovRatio)
-        .def("getFlowInnov", &Ekf::getFlowInnov)
-        .def("getFlowInnovVar", &Ekf::getFlowInnovVar)
-        .def("getFlowInnovRatio", &Ekf::getFlowInnovRatio)
+        
+        .def("getGpsVelPosInnov", [](Ekf &self) {
+                float hvel[2]; float vvel; float hpos[2]; float vpos;
+                self.getGpsVelPosInnov(hvel, vvel, hpos, vpos);
+                return std::make_tuple(std::vector<float>(hvel, hvel+2), vvel, std::vector<float>(hpos, hpos+2), vpos);
+            })
+        .def("getGpsVelPosInnovVar", [](Ekf &self) {
+                float hvel[2]; float vvel; float hpos[2]; float vpos;
+                self.getGpsVelPosInnovVar(hvel, vvel, hpos, vpos);
+                return std::make_tuple(std::vector<float>(hvel, hvel+2), vvel, std::vector<float>(hpos, hpos+2), vpos);
+            })
+        .def("getGpsVelPosInnovRatio", [](Ekf &self) {
+                float hvel, vvel, hpos, vpos;
+                self.getGpsVelPosInnovRatio(hvel, vvel, hpos, vpos);
+                return std::make_tuple(hvel, vvel, hpos, vpos);
+            })
+        .def("getEvVelPosInnov", [](Ekf &self) {
+                float hvel[2]; float vvel; float hpos[2]; float vpos;
+                self.getEvVelPosInnov(hvel, vvel, hpos, vpos);
+                return std::make_tuple(std::vector<float>(hvel, hvel+2), vvel, std::vector<float>(hpos, hpos+2), vpos);
+            })
+        .def("getEvVelPosInnovVar", [](Ekf &self) {
+                float hvel[2]; float vvel; float hpos[2]; float vpos;
+                self.getEvVelPosInnovVar(hvel, vvel, hpos, vpos);
+                return std::make_tuple(std::vector<float>(hvel, hvel+2), vvel, std::vector<float>(hpos, hpos+2), vpos);
+            })
+        .def("getEvVelPosInnovRatio", [](Ekf &self) {
+                float hvel, vvel, hpos, vpos;
+                self.getEvVelPosInnovRatio(hvel, vvel, hpos, vpos);
+                return std::make_tuple(hvel, vvel, hpos, vpos);
+            })
+        
+        .def("getBaroHgtInnov", [](Ekf &self) { float baro_hgt_innov; self.getBaroHgtInnov(baro_hgt_innov); return baro_hgt_innov; })
+        .def("getBaroHgtInnovVar", [](Ekf &self) { float baro_hgt_innov_var; self.getBaroHgtInnovVar(baro_hgt_innov_var); return baro_hgt_innov_var; })
+        .def("getBaroHgtInnovRatio", [](Ekf &self) { float baro_hgt_innov_ratio; self.getBaroHgtInnovRatio(baro_hgt_innov_ratio); return baro_hgt_innov_ratio; })
+
+        .def("getRngHgtInnov", [](Ekf &self) { float rng_hgt_innov; self.getRngHgtInnov(rng_hgt_innov); return rng_hgt_innov; })
+        .def("getRngHgtInnovVar", [](Ekf &self) { float rng_hgt_innov_var; self.getRngHgtInnovVar(rng_hgt_innov_var); return rng_hgt_innov_var; })
+        .def("getRngHgtInnovRatio", [](Ekf &self) { float rng_hgt_innov_ratio; self.getRngHgtInnovRatio(rng_hgt_innov_ratio); return rng_hgt_innov_ratio; })
+
+        .def("getAuxVelInnov", [](Ekf &self) { float aux_vel_innov[2]; self.getAuxVelInnov(aux_vel_innov); return std::vector<float>(aux_vel_innov, aux_vel_innov + 2); })
+        .def("getAuxVelInnovVar", [](Ekf &self) { float aux_vel_innov_var[2]; self.getAuxVelInnovVar(aux_vel_innov_var); return std::vector<float>(aux_vel_innov_var, aux_vel_innov_var + 2); })
+        .def("getAuxVelInnovRatio", [](Ekf &self) { float aux_vel_innov_ratio; self.getAuxVelInnovRatio(aux_vel_innov_ratio); return aux_vel_innov_ratio; })
+
+        .def("getFlowInnov", [](Ekf &self) { float flow_innov[2]; self.getFlowInnov(flow_innov); return std::vector<float>(flow_innov, flow_innov + 2); })
+        .def("getFlowInnovVar", [](Ekf &self) { float flow_innov_var[2]; self.getFlowInnovVar(flow_innov_var); return std::vector<float>(flow_innov_var, flow_innov_var + 2); })
+        .def("getFlowInnovRatio", [](Ekf &self) { float flow_innov_ratio; self.getFlowInnovRatio(flow_innov_ratio); return flow_innov_ratio; })
+        
         .def("getFlowVelBody", &Ekf::getFlowVelBody, py::return_value_policy::reference)
         .def("getFlowVelNE", &Ekf::getFlowVelNE, py::return_value_policy::reference)
         .def("getFlowCompensated", &Ekf::getFlowCompensated, py::return_value_policy::reference)
         .def("getFlowUncompensated", &Ekf::getFlowUncompensated, py::return_value_policy::reference)
         .def("getFlowGyro", &Ekf::getFlowGyro, py::return_value_policy::reference)
-        .def("getHeadingInnov", &Ekf::getHeadingInnov)
-        .def("getHeadingInnovVar", &Ekf::getHeadingInnovVar)
-        .def("getHeadingInnovRatio", &Ekf::getHeadingInnovRatio)
-        .def("getMagInnov", &Ekf::getMagInnov)
-        .def("getMagInnovVar", &Ekf::getMagInnovVar)
-        .def("getMagInnovRatio", &Ekf::getMagInnovRatio)
-        .def("getDragInnov", &Ekf::getDragInnov)
-        .def("getDragInnovVar", &Ekf::getDragInnovVar)
-        .def("getDragInnovRatio", &Ekf::getDragInnovRatio)
-        .def("getAirspeedInnov", &Ekf::getAirspeedInnov)
-        .def("getAirspeedInnovVar", &Ekf::getAirspeedInnovVar)
-        .def("getAirspeedInnovRatio", &Ekf::getAirspeedInnovRatio)
-        .def("getBetaInnov", &Ekf::getBetaInnov)
-        .def("getBetaInnovVar", &Ekf::getBetaInnovVar)
-        .def("getBetaInnovRatio", &Ekf::getBetaInnovRatio)
-        .def("getHaglInnov", &Ekf::getHaglInnov)
-        .def("getHaglInnovVar", &Ekf::getHaglInnovVar)
-        .def("getHaglInnovRatio", &Ekf::getHaglInnovRatio)
+        
+        .def("getHeadingInnov", [](Ekf &self) { float heading_innov; self.getHeadingInnov(heading_innov); return heading_innov; })
+        .def("getHeadingInnovVar", [](Ekf &self) { float heading_innov_var; self.getHeadingInnovVar(heading_innov_var); return heading_innov_var; })
+        .def("getHeadingInnovRatio", [](Ekf &self) { float heading_innov_ratio; self.getHeadingInnovRatio(heading_innov_ratio); return heading_innov_ratio; })
+
+        .def("getMagInnov", [](Ekf &self) { float mag_innov[3]; self.getMagInnov(mag_innov); return std::vector<float>(mag_innov, mag_innov + 3); })
+        .def("getMagInnovVar", [](Ekf &self) { float mag_innov_var[3]; self.getMagInnovVar(mag_innov_var); return std::vector<float>(mag_innov_var, mag_innov_var + 3); })
+        .def("getMagInnovRatio", [](Ekf &self) { float mag_innov_ratio; self.getMagInnovRatio(mag_innov_ratio); return mag_innov_ratio; })
+
+        .def("getDragInnov", [](Ekf &self) { float drag_innov[2]; self.getDragInnov(drag_innov); return std::vector<float>(drag_innov, drag_innov + 2); })
+        .def("getDragInnovVar", [](Ekf &self) { float drag_innov_var[2]; self.getDragInnovVar(drag_innov_var); return std::vector<float>(drag_innov_var, drag_innov_var + 2); })
+        .def("getDragInnovRatio", [](Ekf &self) { float drag_innov_ratio[2]; self.getDragInnovRatio(drag_innov_ratio); return std::vector<float>(drag_innov_ratio, drag_innov_ratio + 2); })
+
+        .def("getAirspeedInnov", [](Ekf &self) { float airspeed_innov; self.getAirspeedInnov(airspeed_innov); return airspeed_innov; })
+        .def("getAirspeedInnovVar", [](Ekf &self) { float airspeed_innov_var; self.getAirspeedInnovVar(airspeed_innov_var); return airspeed_innov_var; })
+        .def("getAirspeedInnovRatio", [](Ekf &self) { float airspeed_innov_ratio; self.getAirspeedInnovRatio(airspeed_innov_ratio); return airspeed_innov_ratio; })
+
+        .def("getBetaInnov", [](Ekf &self) { float beta_innov; self.getBetaInnov(beta_innov); return beta_innov; })
+        .def("getBetaInnovVar", [](Ekf &self) { float beta_innov_var; self.getBetaInnovVar(beta_innov_var); return beta_innov_var; })
+        .def("getBetaInnovRatio", [](Ekf &self) { float beta_innov_ratio; self.getBetaInnovRatio(beta_innov_ratio); return beta_innov_ratio; })
+
+        .def("getHaglInnov", [](Ekf &self) { float hagl_innov; self.getHaglInnov(hagl_innov); return hagl_innov; })
+        .def("getHaglInnovVar", [](Ekf &self) { float hagl_innov_var; self.getHaglInnovVar(hagl_innov_var); return hagl_innov_var; })
+        .def("getHaglInnovRatio", [](Ekf &self) { float hagl_innov_ratio; self.getHaglInnovRatio(hagl_innov_ratio); return hagl_innov_ratio; })
+
         .def("getStateAtFusionHorizonAsVector", &Ekf::getStateAtFusionHorizonAsVector)
         .def("getWindVelocity", &Ekf::getWindVelocity, py::return_value_policy::reference)
         .def("getWindVelocityVariance", &Ekf::getWindVelocityVariance)
-        .def("get_true_airspeed", &Ekf::get_true_airspeed)
+        .def("get_true_airspeed", [](Ekf &self) {float tas; self.get_true_airspeed(&tas); return tas;})
         .def("covariances", &Ekf::covariances, py::return_value_policy::reference)
         .def("covariances_diagonal", &Ekf::covariances_diagonal)
         .def("orientation_covariances", &Ekf::orientation_covariances, py::return_value_policy::reference)
         .def("velocity_covariances", &Ekf::velocity_covariances, py::return_value_policy::reference)
         .def("position_covariances", &Ekf::position_covariances, py::return_value_policy::reference)
         .def("collect_gps", &Ekf::collect_gps)
-        .def("getEkfGlobalOrigin", &Ekf::getEkfGlobalOrigin)
+        .def("getEkfGlobalOrigin", [](Ekf &self) {
+                uint64_t origin_time;
+                double latitude, longitude;
+                float origin_alt;
+                bool success = self.getEkfGlobalOrigin(origin_time, latitude, longitude, origin_alt);
+                return std::make_tuple(success, origin_time, latitude, longitude, origin_alt);
+            })
         .def("setEkfGlobalOrigin", &Ekf::setEkfGlobalOrigin)
         .def("getEkfGlobalOriginAltitude", &Ekf::getEkfGlobalOriginAltitude)
         //.def("setEkfGlobalOriginAltitude", &Ekf::setEkfGlobalOriginAltitude)
-        .def("get_ekf_gpos_accuracy", &Ekf::get_ekf_gpos_accuracy)
-        .def("get_ekf_lpos_accuracy", &Ekf::get_ekf_lpos_accuracy)
-        .def("get_ekf_vel_accuracy", &Ekf::get_ekf_vel_accuracy)
-        .def("get_ekf_ctrl_limits", &Ekf::get_ekf_ctrl_limits)
+        .def("get_ekf_gpos_accuracy", [](Ekf &self) {
+                float ekf_eph, ekf_epv;
+                self.get_ekf_gpos_accuracy(&ekf_eph, &ekf_epv);
+                return std::make_tuple(ekf_eph, ekf_epv);
+            })
+        .def("get_ekf_lpos_accuracy", [](Ekf &self) {
+                float ekf_eph, ekf_epv;
+                self.get_ekf_lpos_accuracy(&ekf_eph, &ekf_epv);
+                return std::make_tuple(ekf_eph, ekf_epv);
+            })
+        .def("get_ekf_vel_accuracy", [](Ekf &self) {
+                float ekf_evh, ekf_evv;
+                self.get_ekf_vel_accuracy(&ekf_evh, &ekf_evv);
+                return std::make_tuple(ekf_evh, ekf_evv);
+            })
+        .def("get_ekf_ctrl_limits", [](Ekf &self) {
+                float vxy_max, vz_max, hagl_min, hagl_max;
+                self.get_ekf_ctrl_limits(&vxy_max, &vz_max, &hagl_min, &hagl_max);
+                return std::make_tuple(vxy_max, vz_max, hagl_min, hagl_max);
+            })
         .def("resetImuBias", &Ekf::resetImuBias)
         .def("resetGyroBias", &Ekf::resetGyroBias)
         .def("resetAccelBias", &Ekf::resetAccelBias)
@@ -663,7 +725,12 @@ PYBIND11_MODULE(ecl, m) {
         .def("getVelocityVariance", &Ekf::getVelocityVariance)
         .def("getPositionVariance", &Ekf::getPositionVariance)
         .def("getOutputTrackingError", &Ekf::getOutputTrackingError, py::return_value_policy::reference)
-        .def("get_gps_drift_metrics", &Ekf::get_gps_drift_metrics)
+        .def("get_gps_drift_metrics", [](Ekf &self) {
+                float drift[3];
+                bool blocked;
+                bool success = self.get_gps_drift_metrics(drift, &blocked);
+                return std::make_tuple(success, std::vector<float>(drift, drift+3), blocked);
+            })
         .def("global_position_is_valid", &Ekf::global_position_is_valid)
         .def("local_position_is_valid", &Ekf::local_position_is_valid)
         .def("isTerrainEstimateValid", &Ekf::isTerrainEstimateValid)
@@ -676,19 +743,63 @@ PYBIND11_MODULE(ecl, m) {
         .def("getMagBias", &Ekf::getMagBias, py::return_value_policy::reference)
         .def("getGyroBiasVariance", &Ekf::getGyroBiasVariance)
         .def("getAccelBiasVariance", &Ekf::getAccelBiasVariance)
-        .def("getMagBiasVariance", &Ekf::getMagBiasVariance, py::return_value_policy::reference)
-        .def("get_gps_check_status", &Ekf::get_gps_check_status)
-        //.def("state_reset_status", &Ekf::state_reset_status, py::return_value_policy::reference)
-        .def("get_posD_reset", &Ekf::get_posD_reset)
-        .def("get_velD_reset", &Ekf::get_velD_reset)
-        .def("get_posNE_reset", &Ekf::get_posNE_reset)
-        .def("get_velNE_reset", &Ekf::get_velNE_reset)
-        .def("get_quat_reset", &Ekf::get_quat_reset)
-        .def("get_innovation_test_status", &Ekf::get_innovation_test_status)
-        .def("get_ekf_soln_status", &Ekf::get_ekf_soln_status)
+        .def("getMagBiasVariance", &Ekf::getMagBiasVariance)
+        
+        .def("get_gps_check_status", [](Ekf &self) {
+                uint16_t val;
+                self.get_gps_check_status(&val);
+                return val;
+            })
+        .def("get_posD_reset", [](Ekf &self) {
+                float delta;
+                uint8_t counter;
+                self.get_posD_reset(&delta, &counter);
+                return std::make_tuple(delta, counter);
+            })
+        .def("get_velD_reset", [](Ekf &self) {
+                float delta;
+                uint8_t counter;
+                self.get_velD_reset(&delta, &counter);
+                return std::make_tuple(delta, counter);
+            })
+        .def("get_posNE_reset", [](Ekf &self) {
+                float delta[2];
+                uint8_t counter;
+                self.get_posNE_reset(delta, &counter);
+                return std::make_tuple(std::vector<float>(delta, delta+2), counter);
+            })
+        .def("get_velNE_reset", [](Ekf &self) {
+                float delta[2];
+                uint8_t counter;
+                self.get_velNE_reset(delta, &counter);
+                return std::make_tuple(std::vector<float>(delta, delta+2), counter);
+            })
+        .def("get_quat_reset", [](Ekf &self) {
+                float delta_quat[4];
+                uint8_t counter;
+                self.get_quat_reset(delta_quat, &counter);
+                return std::make_tuple(std::vector<float>(delta_quat, delta_quat+4), counter);
+            })
+        .def("get_innovation_test_status", [](Ekf &self) {
+                uint16_t status;
+                float mag, vel, pos, hgt, tas, hagl, beta;
+                self.get_innovation_test_status(status, mag, vel, pos, hgt, tas, hagl, beta);
+                return std::make_tuple(status, mag, vel, pos, hgt, tas, hagl, beta);
+            })
+        .def("get_ekf_soln_status", [](Ekf &self) {
+                uint16_t status;
+                self.get_ekf_soln_status(&status);
+                return status;
+            })
+
         .def("getVisionAlignmentQuaternion", &Ekf::getVisionAlignmentQuaternion)
         .def("calculate_quaternion", &Ekf::calculate_quaternion)
         .def("set_min_required_gps_health_time", &Ekf::set_min_required_gps_health_time)
-        .def("getDataEKFGSF", &Ekf::getDataEKFGSF)
+        .def("getDataEKFGSF", [](Ekf &self) {
+                float yaw_composite, yaw_variance; 
+                float yaw[N_MODELS_EKFGSF], innov_VN[N_MODELS_EKFGSF], innov_VE[N_MODELS_EKFGSF], weight[N_MODELS_EKFGSF];
+                bool available = self.getDataEKFGSF(&yaw_composite, &yaw_variance, yaw, innov_VN, innov_VE, weight);
+                return std::make_tuple(available, yaw_composite, yaw_variance, std::vector<float>(yaw, yaw+N_MODELS_EKFGSF), std::vector<float>(innov_VN, innov_VN+N_MODELS_EKFGSF), std::vector<float>(innov_VE, innov_VE+N_MODELS_EKFGSF), std::vector<float>(weight, weight+N_MODELS_EKFGSF));
+            })
         ;
 }
