@@ -1,10 +1,11 @@
-# PX4-ECL Python API
+# PX4-ECL Python Bindings
 ## Links to the original library
 - [PX4-ECL GitHub Repo](https://github.com/PX4/PX4-ECL)
 - [EKF Documentation and Tuning Guide](https://docs.px4.io/master/en/advanced_config/tuning_the_ecl_ekf.html)
 
-## Notes for use in Python
-
+## Usage
+MacOS, Ubuntu, and Windows wheels should be available in the wheels.yml github workflow. Download and pip install these.
+To build on your own machine, run ```python3 -m build --wheel``` then pip install the .whl file. 
 As of now, the Python bindings do not have any documentation. In general, please refer the the original documentation provided by PixHawk.
 
 ### Numpy and the Matrix library
@@ -144,6 +145,16 @@ explicit Euler(const Type data_[3]) :
 }
 ```
 * NOTE: we will never have a templated flass available to the Python interface! So have templated 'class-declarer' functions for vector, matrix, maybe slice and scalar (unfortunately I dont think we can reuse bindings between these because some of them extend each other, not just typedefs). Then make a binder macro for each of these that will make it easy to bind random types like Quat which is a Vector<float, 4>
+
+### Handling pass by reference
+
+See "Limitations involving reference arguments" in the PyBind11 FAQ page (https://pybind11.readthedocs.io/en/stable/faq.html)
+Pass/return by reference is not possible with PyBind. To get around this, just wrap the function with a lambda and return the modified values, return a tuple (std::make_tuple()) if multiple reference arguments.
+Note that when accessing state/members of an object, must explicitly pass self as first parameter like you would in Python.
+The convention I have followed for returned values is as follows:
+- the first value in the tuple is the actual return value of the C++ function
+- all proceeding values are the reference arguments in their original order (arrays are returned as vectors, which work in Python automatically thanks to the pybind11/stl.h header)
+Note that these bindings create some additional overhead
 
 To test in Python, just run Python3 in same directory as the generated .so file and import ecl. Note that ekf is a submodule of ecl, should be called w/ 'ecl.Ekf'.
 
