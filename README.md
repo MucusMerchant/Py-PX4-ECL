@@ -1,7 +1,7 @@
 # PX4-ECL Python Bindings
 ## Links to the original library
 - [PX4-ECL GitHub Repo](https://github.com/PX4/PX4-ECL)
-- [EKF Documentation and Tuning Guide](https://docs.px4.io/master/en/advanced_config/tuning_the_ecl_ekf.html)
+- [EKF Documentation and Tuning Guide]([https://docs.px4.io/master/en/advanced_config/tuning_the_ecl_ekf.html](https://docs.px4.io/v1.12/en/advanced_config/tuning_the_ecl_ekf.html))
 
 ## Usage
 MacOS, Ubuntu, and Windows wheels should be available in the wheels.yml github workflow. Download and pip install these.
