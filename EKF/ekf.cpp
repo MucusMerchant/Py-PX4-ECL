@@ -114,18 +114,18 @@ bool Ekf::update()
 	if (_imu_updated) {
 		// perform state and covariance prediction for the main filter
 		predictState();
-		predictCovariance();
+		//predictCovariance();
 
 		// control fusion of observation data
-		controlFusionModes();
+		//controlFusionModes();
 
 		// run a separate filter for terrain estimation
-		runTerrainEstimator();
+		//runTerrainEstimator();
 
 		updated = true;
 
 		// run EKF-GSF yaw estimator
-		runYawEKFGSF();
+		//runYawEKFGSF();
 	}
 
 	// the output observer always runs
