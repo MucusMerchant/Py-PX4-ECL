@@ -178,7 +178,7 @@ void Ekf::controlFusionModes()
 	controlAuxVelFusion();
 
 	// Fake position measurement for constraining drift when no other velocity or position measurements
-	controlFakePosFusion();
+	//controlFakePosFusion();
 
 	// check if we are no longer fusing measurements that directly constrain velocity drift
 	update_deadreckoning_status();
