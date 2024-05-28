@@ -120,12 +120,12 @@ bool Ekf::update()
 		controlFusionModes();
 
 		// run a separate filter for terrain estimation
-		//runTerrainEstimator();
+		runTerrainEstimator();
 
 		updated = true;
 
 		// run EKF-GSF yaw estimator
-		//runYawEKFGSF();
+		runYawEKFGSF();
 	}
 
 	// the output observer always runs
