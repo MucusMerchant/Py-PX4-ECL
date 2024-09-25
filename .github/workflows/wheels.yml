@@ -60,15 +60,21 @@ jobs:
           env:
               CMAKE_GENERATOR: "MinGW Makefiles"
           run: |
-            python3 -m build --wheel --outdir wheelhouse
+            python3 -m build --wheel --outdir dist
           
         - name: Upload binary
           uses: actions/upload-artifact@v4
           with:
             name: wheel-${{ matrix.os }}
-            path: wheelhouse/*.whl
+            path: dist/*.whl
+
+        - name: Commit and push
+          run: |
+            git add dist
+            git commit -m "Generated distributions"
+            git push
   
         - name: Install and import ecl
           run: |
-            python3 -m pip install --no-index --find-links=wheelhouse ecl
+            python3 -m pip install --no-index --find-links=dist ecl
             python3 -c 'import ecl'
