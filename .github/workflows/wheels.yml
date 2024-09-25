@@ -70,8 +70,10 @@ jobs:
 
         - name: Commit and push
           run: |
+            git config user.email "meowmeowmeow@gmail.com"
+            git config user.name "meowmeowmeow"
             git add dist
-            git commit -m "Generated distributions"
+            git commit -m "Generated distributions" --author="meowmeowmeow meowmeowmeow@gmail.com"
             git push
   
         - name: Install and import ecl
