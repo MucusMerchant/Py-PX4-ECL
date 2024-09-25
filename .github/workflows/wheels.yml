@@ -70,6 +70,7 @@ jobs:
 
         - name: Commit and push
           run: |
+            git pull
             git config user.email "meowmeowmeow@gmail.com"
             git config user.name "meowmeowmeow"
             git add dist
