@@ -4,7 +4,7 @@
 - [EKF Documentation and Tuning Guide](https://docs.px4.io/v1.12/en/advanced_config/tuning_the_ecl_ekf.html)
 
 ## Usage
-MacOS, Ubuntu, and Windows wheels should be available in the wheels.yml github workflow. Download and pip install these.
+MacOS, Ubuntu, and Windows wheels for Python 3.10 should be available in the `dist` folder. Download and pip install these.
 To build on your own machine, run ```python3 -m build --wheel``` then pip install the .whl file. 
 As of now, the Python bindings do not have any documentation. In general, please refer the the original documentation provided by PixHawk.
 
